@@ -16,6 +16,9 @@ const DOWNLOADS_CSV = join(
   "registration.csv"
 );
 
+const NETLIFY_TOKEN = process.env.NETLIFY_TOKEN;
+const NETLIFY_FORM_ID = process.env.NETLIFY_FORM_ID;
+
 // --- CLI args ---
 
 const { values } = parseArgs({
@@ -115,6 +118,57 @@ function parseCSV(csv: string): Record<string, string>[] {
   });
 }
 
+// --- Netlify API ---
+
+interface NetlifySubmission {
+  id: string;
+  data: Record<string, string>;
+  created_at: string;
+}
+
+async function fetchFromNetlify(): Promise<Record<string, string>[]> {
+  const results: Record<string, string>[] = [];
+  let page = 1;
+  const perPage = 100;
+
+  while (true) {
+    const res = await fetch(
+      `https://api.netlify.com/api/v1/forms/${NETLIFY_FORM_ID}/submissions?per_page=${perPage}&page=${page}`,
+      { headers: { Authorization: `Bearer ${NETLIFY_TOKEN}` } }
+    );
+
+    if (!res.ok) {
+      throw new Error(`Netlify API error: ${res.status} ${res.statusText}`);
+    }
+
+    const submissions: NetlifySubmission[] = await res.json();
+
+    if (submissions.length === 0) break;
+
+    for (const sub of submissions) {
+      results.push({
+        full_name: sub.data.full_name || sub.data.name || "",
+        email: sub.data.email || "",
+        phone: sub.data.phone || "",
+        city: sub.data.city || "",
+        gender: sub.data.gender || "",
+        wants_tshirt: sub.data.wants_tshirt || "no",
+        tshirt_size: sub.data.tshirt_size || "",
+        emergency_contact_name: sub.data.emergency_contact_name || "",
+        emergency_contact_phone: sub.data.emergency_contact_phone || "",
+      });
+    }
+
+    if (submissions.length < perPage) break;
+
+    page++;
+  }
+
+  return results;
+}
+
+// --- Load recipients ---
+
 let registrants: Record<string, string>[];
 
 if (values.emails) {
@@ -122,13 +176,18 @@ if (values.emails) {
     email: e.trim(),
     full_name: "Friend",
   }));
+} else if (NETLIFY_TOKEN && NETLIFY_FORM_ID) {
+  console.log("Fetching registrants from Netlify API...");
+  registrants = await fetchFromNetlify();
+  console.log(`Fetched ${registrants.length} submissions.`);
 } else {
   if (!existsSync(LOCAL_CSV)) {
     console.log("No local CSV found. Syncing from Downloads...");
 
     if (!existsSync(DOWNLOADS_CSV)) {
       console.error(`CSV not found at ${DOWNLOADS_CSV}`);
-      console.error("Download the CSV from Netlify and place it in ~/Downloads/registration.csv");
+      console.error("Set NETLIFY_TOKEN + NETLIFY_FORM_ID in .env to fetch directly,");
+      console.error("or download the CSV from Netlify to ~/Downloads/registration.csv");
       process.exit(1);
     }
 
