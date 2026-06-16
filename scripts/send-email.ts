@@ -210,6 +210,30 @@ function render(template: string, vars: Record<string, string>): string {
   return result;
 }
 
+// --- Header (default branded masthead; opt-out for image-led templates) ---
+
+const defaultHeader = `<div class="email-header">
+              <img src="https://boldnessandburdens.com/logo-black.png" alt="Boldness & Burdens Conference" />
+              <h1>School of the Spirit</h1>
+            </div>
+
+            <div class="divider"></div>`;
+
+// Templates that lead with their own branded graphic skip the text header.
+const noHeaderTemplates = new Set(["30-day-countdown"]);
+
+const header = noHeaderTemplates.has(templateName) ? "" : defaultHeader;
+
+// --- Inline images embedded via CID (referenced as src="cid:<cid>") ---
+
+const inlineImages: Record<string, { filename: string; path: string; cid: string }[]> = {
+  "30-day-countdown": [
+    { filename: "countdown-30.jpg", path: join(ROOT, "public", "countdown-30.jpg"), cid: "countdown30" },
+  ],
+};
+
+const attachments = inlineImages[templateName] || [];
+
 // --- Subject lines per template ---
 
 const defaultSubjects: Record<string, string> = {
@@ -220,6 +244,7 @@ const defaultSubjects: Record<string, string> = {
   "preparation-guide": "How to Prepare for BBC 2026",
   "tshirt-signup": "B&B Conference T-Shirt Sign Up is Open!",
   "venue-change": "Important Update: B&B Conference 2026 Venue Change",
+  "30-day-countdown": "30 Days to Go — Boldness & Burdens Conference 2026",
 };
 
 // --- SMTP setup ---
@@ -292,7 +317,7 @@ for (const registrant of recipients) {
   };
 
   const content = render(contentHtml, vars);
-  const html = render(baseHtml, { ...vars, content });
+  const html = render(baseHtml, { ...vars, header, content });
 
   if (values["dry-run"]) {
     console.log(`  WOULD SEND  ${email} (${registrant.full_name})`);
@@ -316,6 +341,7 @@ for (const registrant of recipients) {
       to: email,
       subject,
       html,
+      attachments,
     });
 
     markSent(email, templateName);
