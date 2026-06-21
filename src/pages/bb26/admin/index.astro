@@ -80,6 +80,7 @@ const saved = Astro.url.searchParams.get("saved");
           </div>
           <ul class="adm__stats">
             <li><b>{participants.length}</b><span>people</span></li>
+            <li><b>{participants.filter((p) => p.stayingOnCamp).length}</b><span>on camp</span></li>
             <li><b>{participants.filter((p) => p.room).length}</b><span>roomed</span></li>
             <li><b>{participants.filter((p) => p.checkedIn).length}</b><span>checked in</span></li>
           </ul>
@@ -108,7 +109,10 @@ const saved = Astro.url.searchParams.get("saved");
                 <input type="hidden" name="code" value={p.code} />
                 <span class="board__code">{p.code}</span>
                 <span class="board__name">
-                  {p.name}
+                  <span class="board__nameline">
+                    {p.name}
+                    {!p.stayingOnCamp && <span class="board__day">Day</span>}
+                  </span>
                   {p.city && <small>{p.city}</small>}
                 </span>
                 <input name="room" class="board__in" value={p.room ?? ""} placeholder="—" aria-label={`Room for ${p.name}`} />
@@ -362,6 +366,27 @@ const saved = Astro.url.searchParams.get("saved");
     font-weight: 400;
     font-size: 0.72rem;
     color: var(--color-charcoal-light);
+  }
+
+  .board__nameline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* day / commuter participant — does not need a dorm bed */
+  .board__day {
+    font-family: var(--font-body);
+    font-size: 0.56rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    background: rgba(212, 135, 58, 0.14);
+    border: 1px solid rgba(212, 135, 58, 0.4);
+    padding: 2px 7px;
+    border-radius: 999px;
+    white-space: nowrap;
   }
 
   .board__in {

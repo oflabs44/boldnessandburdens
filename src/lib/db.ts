@@ -22,6 +22,7 @@ export interface ParticipantAdminRow extends ParticipantCard {
   email: string | null;
   phone: string | null;
   city: string | null;
+  stayingOnCamp: boolean;
 }
 
 // Typeahead search — returns minimal data only (name + code).
@@ -78,7 +79,7 @@ export async function getCard(code: string): Promise<ParticipantCard | null> {
 export async function listParticipants(): Promise<ParticipantAdminRow[]> {
   const { results } = await env.DB.prepare(
     `SELECT participant_code, full_name, email, phone, city,
-            room_number, group_name, eating_group, checked_in
+            room_number, group_name, eating_group, checked_in, staying_on_camp
        FROM participants
       WHERE edition = ?
       ORDER BY participant_code`,
@@ -94,6 +95,7 @@ export async function listParticipants(): Promise<ParticipantAdminRow[]> {
       group_name: string | null;
       eating_group: string | null;
       checked_in: number;
+      staying_on_camp: number;
     }>();
 
   return results.map((r) => ({
@@ -106,6 +108,7 @@ export async function listParticipants(): Promise<ParticipantAdminRow[]> {
     group: r.group_name,
     eating: r.eating_group,
     checkedIn: !!r.checked_in,
+    stayingOnCamp: !!r.staying_on_camp,
   }));
 }
 
