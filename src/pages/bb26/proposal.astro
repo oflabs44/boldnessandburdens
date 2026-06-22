@@ -1,0 +1,419 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { edition } from "../../config/editions/bb26";
+
+interface Person {
+  code: string;
+  name: string;
+  note?: string;
+}
+
+interface Room {
+  no: string;
+  label: string;
+  wing: "women" | "men";
+  place: "dorm" | "freizeit";
+  people: Person[];
+}
+
+// Draft proposal — NOT yet written to D1.
+// 6 dorms (Rooms 1-6) + the Freizeit Haus. Women fill 5 dorms; the men
+// take 1 dorm plus the Freizeit Haus (no bathroom — they use Room 6).
+const rooms: Room[] = [
+  {
+    no: "1", label: "Orie + Olugbuyi", wing: "women", place: "dorm",
+    people: [
+      { code: "BB26-040", name: "Maryjane Oluchi" },
+      { code: "BB26-041", name: "Chidalu Orie" },
+      { code: "BB26-042", name: "Onyie Orie" },
+      { code: "BB26-043", name: "Chisaram Orie" },
+      { code: "BB26-018", name: "Anjolaoluwa Olugbuyi", note: "sisters" },
+      { code: "BB26-020", name: "Ireoluwa Olugbuyi", note: "sisters" },
+    ],
+  },
+  {
+    no: "2", label: "Neumann · Emily · Nianchou", wing: "women", place: "dorm",
+    people: [
+      { code: "BB26-033", name: "Naomi Neumann", note: "+ baby Erwin" },
+      { code: "BB26-034", name: "Grace Neumann" },
+      { code: "BB26-022", name: "Emily Muhia" },
+      { code: "BB26-025", name: "Grâce Nianchou" },
+      { code: "BB26-026", name: "Sarah Nianchou" },
+      { code: "BB26-037", name: "Rachel Mujong" },
+    ],
+  },
+  {
+    no: "3", label: "Sorunke + 3", wing: "women", place: "dorm",
+    people: [
+      { code: "BB26-007", name: "Teniola Sorunke", note: "+ baby Nasya" },
+      { code: "BB26-016", name: "Anika Sorunke" },
+      { code: "BB26-015", name: "Beulah Sorunke" },
+      { code: "BB26-044", name: "Theresa Ndala" },
+      { code: "BB26-030", name: "Larisha Thevathasan" },
+      { code: "BB26-009", name: "Tolulope Victoria Adekanye" },
+    ],
+  },
+  {
+    no: "4", label: "Two mums + 4", wing: "women", place: "dorm",
+    people: [
+      { code: "BB26-003", name: "Olawumi Fagbemi", note: "+ baby Lois" },
+      { code: "BB26-023", name: "Famuyiwa Eniola Taiwo", note: "+ baby Gabrielle" },
+      { code: "BB26-024", name: "Magdalene Ofure Alfred" },
+      { code: "BB26-008", name: "Oluwatosin Adepitan" },
+      { code: "BB26-010", name: "Elizabeth Chinyere Kanu" },
+      { code: "BB26-011", name: "Helen Chijioke" },
+    ],
+  },
+  {
+    no: "5", label: "Singles", wing: "women", place: "dorm",
+    people: [
+      { code: "BB26-045", name: "Phoebe Adenmosun" },
+      { code: "BB26-031", name: "Miriam Wobieri" },
+      { code: "BB26-038", name: "Alice Reinwarth" },
+    ],
+  },
+  {
+    no: "6", label: "Men A", wing: "men", place: "dorm",
+    people: [
+      { code: "BB26-013", name: "Emmanuel Sorunke" },
+      { code: "BB26-019", name: "Olaoluwatofunmi Olugbuyi" },
+      { code: "BB26-032", name: "Ogheneruemu Joel Akpoyomare", note: "from Friday" },
+      { code: "BB26-036", name: "Tomiwa Japhet Adeyemo" },
+      { code: "BB26-002", name: "Onyeka Nathan Abonyi", note: "from Friday" },
+      { code: "BB26-006", name: "Jonathan Papa", note: "from Friday" },
+    ],
+  },
+  {
+    no: "", label: "Men B", wing: "men", place: "freizeit",
+    people: [
+      { code: "BB26-001", name: "David Chijioke" },
+      { code: "BB26-004", name: "Eniola Adenmosun" },
+      { code: "BB26-005", name: "Oladayo Fagbemi" },
+      { code: "BB26-012", name: "Emmanuel Adenmosun" },
+      { code: "BB26-039", name: "Joakim Mercier" },
+    ],
+  },
+];
+
+const womenRooms = rooms.filter((r) => r.wing === "women");
+const menRooms = rooms.filter((r) => r.wing === "men");
+const count = (rs: Room[]) => rs.reduce((n, r) => n + r.people.length, 0);
+
+const wings = [
+  { title: "Women", rooms: womenRooms },
+  { title: "Men", rooms: menRooms },
+];
+---
+
+<BaseLayout title={`Room Einteilung · ${edition.shortName}`} noindex={true} transparentHeader={true}>
+  <main class="prop">
+    <header class="prop__head">
+      <img class="prop__logo" src="/logo-black.png" alt="Boldness & Burdens Conference" width="600" height="630" />
+      <div class="prop__heading">
+        <p class="prop__eyebrow">{edition.shortName} · Accommodation</p>
+        <h1 class="prop__title">Room Einteilung</h1>
+      </div>
+      <span class="prop__draft">Proposal · Draft</span>
+    </header>
+
+    <ul class="prop__stats">
+      <li><b>{count(rooms)}</b><span>beds</span></li>
+      <li><b>{count(womenRooms)}</b><span>women</span></li>
+      <li><b>{count(menRooms)}</b><span>men</span></li>
+      <li><b>4</b><span>babies</span></li>
+      <li><b>6&nbsp;+&nbsp;1</b><span>dorms · FH</span></li>
+    </ul>
+
+    {wings.map((wing) => (
+      <section class="wing">
+        <h2 class="wing__title">{wing.title}</h2>
+        <div class="grid">
+          {wing.rooms.map((r) => (
+            <article class={`card card--${r.wing} ${r.place === "freizeit" ? "card--fh" : ""}`}>
+              <header class="card__head">
+                <span class="card__no">{r.place === "freizeit" ? "FH" : `R${r.no}`}</span>
+                <div class="card__id">
+                  <h3 class="card__label">{r.place === "freizeit" ? "Freizeit Haus" : `Room ${r.no}`}</h3>
+                </div>
+                <span class="card__count">{r.people.length}</span>
+              </header>
+
+              <table class="ptable">
+                <thead>
+                  <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {r.people.map((p) => (
+                    <tr>
+                      <td class="ptable__code">{p.code}</td>
+                      <td class="ptable__name">
+                        <span>{p.name}</span>
+                        {p.note && <span class="ptable__note">{p.note}</span>}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {r.place === "freizeit" && (
+                <p class="card__foot">No bathroom — uses the nearest men's dorm (Room 6).</p>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <p class="prop__note">
+      Draft proposal for review — not saved to the roster. Babies co-sleep with their mum and
+      do not take a bed.
+    </p>
+  </main>
+</BaseLayout>
+
+<style>
+  .prop {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: clamp(28px, 5vw, 56px) var(--space-md) var(--space-4xl);
+  }
+
+  .prop__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-xl);
+  }
+
+  .prop__logo { width: 62px; height: auto; flex: 0 0 auto; margin-left: -4px; }
+
+  .prop__heading { min-width: 0; }
+
+  .prop__eyebrow {
+    font-family: var(--font-body);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    margin: 0 0 2px;
+  }
+
+  .prop__title {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 6vw, 3.2rem);
+    letter-spacing: 0.03em;
+    color: var(--color-charcoal);
+    margin: 0;
+    line-height: 0.9;
+  }
+
+  .prop__draft {
+    margin-left: auto;
+    font-family: var(--font-body);
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    background: rgba(212, 135, 58, 0.14);
+    border: 1px solid rgba(212, 135, 58, 0.4);
+    padding: 5px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .prop__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    list-style: none;
+    margin: 0 0 var(--space-2xl);
+    padding: 0;
+  }
+
+  .prop__stats li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 72px;
+    padding: 10px 14px;
+    background: #fbf8f2;
+    border: 1px solid #ece2d0;
+    border-radius: 12px;
+  }
+
+  .prop__stats b {
+    font-family: var(--font-display);
+    font-size: 1.55rem;
+    line-height: 1;
+    color: var(--color-charcoal);
+  }
+
+  .prop__stats span {
+    font-family: var(--font-body);
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-charcoal-light);
+    margin-top: 4px;
+    white-space: nowrap;
+  }
+
+  .wing { margin-bottom: var(--space-2xl); }
+
+  .wing__title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-charcoal);
+    margin: 0 0 var(--space-md);
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid rgba(212, 135, 58, 0.28);
+  }
+
+  .grid {
+    display: grid;
+    gap: var(--space-lg);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 720px) {
+    .grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: #fbf8f2;
+    border: 1px solid #ece2d0;
+    border-radius: 16px;
+    padding: var(--space-lg);
+  }
+
+  .card--fh {
+    background: #f6efe2;
+    border-color: rgba(212, 135, 58, 0.4);
+  }
+
+  .card__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
+
+  .card__no {
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    letter-spacing: 0.04em;
+    color: var(--color-cream);
+    background: var(--color-accent-dark);
+    border-radius: 10px;
+  }
+
+  .card--men .card__no { background: var(--color-charcoal); }
+
+  .card__id { min-width: 0; }
+
+  .card__label {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    letter-spacing: 0.03em;
+    color: var(--color-charcoal);
+    margin: 0;
+    line-height: 1;
+  }
+
+  .card__count {
+    margin-left: auto;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: var(--color-accent-dark);
+    line-height: 1;
+  }
+
+  /* ---- people table (optimised for scanning) ---- */
+  .ptable {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-body);
+    table-layout: fixed;
+  }
+
+  .ptable thead th {
+    text-align: left;
+    font-size: 0.56rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-charcoal-light);
+    padding: 0 10px 6px;
+    border-bottom: 1.5px solid #e3d8c2;
+  }
+
+  .ptable th:first-child,
+  .ptable td:first-child { width: 96px; }
+
+  .ptable tbody td {
+    padding: 8px 10px;
+    vertical-align: baseline;
+    border-bottom: 1px solid #f0e8da;
+  }
+
+  .ptable tbody tr:last-child td { border-bottom: none; }
+
+
+  .ptable__code {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #9c7322;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ptable__name {
+    font-size: 0.95rem;
+    line-height: 1.25;
+    color: var(--color-charcoal);
+  }
+
+  .ptable__note {
+    display: block;
+    margin-top: 1px;
+    font-size: 0.68rem;
+    color: var(--color-accent-dark);
+  }
+
+  .card__foot {
+    margin: var(--space-md) 0 0;
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-style: italic;
+    color: var(--color-charcoal-light);
+  }
+
+  .prop__note {
+    margin: var(--space-xl) 0 0;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--color-charcoal-light);
+    text-align: center;
+  }
+</style>
