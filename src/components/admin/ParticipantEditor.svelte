@@ -26,12 +26,10 @@
     participant,
     days,
     badgeQr,
-    badgeHref,
   }: {
     participant: Participant;
     days: Day[];
     badgeQr: string;
-    badgeHref: string;
   } = $props();
 
   // Editable working copies seeded from the prop's initial value. untrack()
@@ -167,15 +165,16 @@
     }}
   >
     <div class="qrmodal__card">
+      <div class="qrmodal__bar">
+        <button type="button" class="qrmodal__close" onclick={() => qrDialog.close()} aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+        </button>
+      </div>
       <div class="qrmodal__qr">
         <!-- eslint-disable-next-line svelte/no-at-html-tags -->
         {@html badgeQr}
       </div>
       <p class="qrmodal__cap">{participant.name} · {participant.code}</p>
-      <div class="qrmodal__actions">
-        <a class="btn" href={badgeHref} target="_blank" rel="noopener">Open badge page</a>
-        <button type="button" class="btn btn--primary" onclick={() => qrDialog.close()}>Done</button>
-      </div>
     </div>
   </dialog>
 
@@ -293,12 +292,29 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--ad-4);
-    padding: var(--ad-6);
+    gap: var(--ad-3);
+    padding: var(--ad-3) var(--ad-5) var(--ad-5);
     background: #fff;
     border-radius: var(--ad-r-lg);
   }
-  .qrmodal__qr { width: min(78vw, 78vh, 460px); }
+  .qrmodal__bar { width: 100%; display: flex; justify-content: flex-end; }
+  .qrmodal__close {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    color: var(--ad-text-2);
+    background: var(--ad-panel-3);
+    border: none;
+    border-radius: var(--ad-r-pill);
+    cursor: pointer;
+    transition: background 0.15s var(--ad-ease), color 0.15s var(--ad-ease);
+  }
+  .qrmodal__close:hover { background: var(--ad-border); color: var(--ad-text); }
+  .qrmodal__close:focus-visible { outline: 2px solid var(--ad-accent); outline-offset: 2px; }
+  .qrmodal__close svg { width: 17px; height: 17px; }
+  .qrmodal__qr { width: min(78vw, 72vh, 460px); }
   .qrmodal__qr :global(svg) { display: block; width: 100%; height: auto; }
   .qrmodal__cap {
     margin: 0;
@@ -307,7 +323,6 @@
     color: var(--ad-text-2);
     text-align: center;
   }
-  .qrmodal__actions { display: flex; gap: var(--ad-2); }
 
   /* ---- conference check-in (read-only; set on the roster) ---- */
   .arrival {
