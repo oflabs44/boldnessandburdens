@@ -43,3 +43,10 @@ export function sessionCookie(request: Request): string {
   // /_actions/*, which the admin mutations (setAttendance, saveParticipant) gate on.
   return `${COOKIE_NAME}=${encodeURIComponent(secret())}; Path=/; HttpOnly;${secureFlag} SameSite=Lax; Max-Age=${MAX_AGE}`;
 }
+
+// Expire the session cookie (same Path=/ so it clears the one set above).
+export function clearCookie(request: Request): string {
+  const secureFlag = new URL(request.url).protocol === "https:" ? " Secure;" : "";
+
+  return `${COOKIE_NAME}=; Path=/; HttpOnly;${secureFlag} SameSite=Lax; Max-Age=0`;
+}

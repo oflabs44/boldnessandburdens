@@ -58,6 +58,17 @@
     toastKind = kind;
   }
 
+  // A stale/expired session surfaces as a FORBIDDEN action error. Send the
+  // admin back to sign in rather than showing a generic "try again".
+  function sessionExpired(error: { code?: string } | undefined): boolean {
+    if (error?.code !== "FORBIDDEN") return false;
+
+    flash("Session expired — taking you to sign in…", "err");
+    window.location.href = `/bb26/admin?next=${encodeURIComponent(location.pathname)}`;
+
+    return true;
+  }
+
   // checked_in_at is stored UTC ("YYYY-MM-DD HH:MM:SS"); show it in Berlin time.
   function fmtCheckin(ts: string): string {
     return new Date(ts.replace(" ", "T") + "Z").toLocaleString("en-GB", {
@@ -102,7 +113,7 @@
       // revert
       if (prev === undefined) delete attendance[day];
       else attendance[day] = prev;
-      flash("Could not save attendance — try again", "err");
+      if (!sessionExpired(error)) flash("Could not save attendance — try again", "err");
     }
   }
 
@@ -122,7 +133,11 @@
     const { error } = await actions.saveParticipant(fd);
     saving = false;
 
-    flash(error ? "Could not save — try again" : "Details saved", error ? "err" : "ok");
+    if (error) {
+      if (!sessionExpired(error)) flash("Could not save — try again", "err");
+    } else {
+      flash("Details saved", "ok");
+    }
   }
 </script>
 

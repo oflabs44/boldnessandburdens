@@ -41,7 +41,12 @@
     busyCode = null;
     if (error) {
       arrived[code] = prev;
-      errMsg = "Could not update check-in — try again";
+      if (error.code === "FORBIDDEN") {
+        errMsg = "Session expired — taking you to sign in…";
+        window.location.href = `/bb26/admin?next=${encodeURIComponent(location.pathname)}`;
+      } else {
+        errMsg = "Could not update check-in — try again";
+      }
     }
   }
 
