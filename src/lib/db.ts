@@ -4,11 +4,6 @@
 import { env } from "cloudflare:workers";
 import { edition } from "../config/editions/bb26";
 
-export interface ParticipantSummary {
-  code: string;
-  name: string;
-}
-
 // day ('YYYY-MM-DD') -> checked_in_at timestamp (UTC, "YYYY-MM-DD HH:MM:SS")
 export type Attendance = Record<string, string>;
 
@@ -27,25 +22,17 @@ export interface ParticipantAdminRow extends ParticipantCard {
   stayingOnCamp: boolean;
 }
 
-// Typeahead search — returns minimal data only (name + code).
-export async function searchParticipants(
-  q: string,
-): Promise<ParticipantSummary[]> {
-  const term = q.trim();
-
-  if (term.length < 2) return [];
-
-  const { results } = await env.DB.prepare(
-    `SELECT participant_code, full_name
-       FROM participants
-      WHERE edition = ? AND full_name LIKE ? COLLATE NOCASE
-      ORDER BY full_name
-      LIMIT 15`,
+// One participant's full name by code — used to verify the last-name check on
+// the public /bb26/participant lookup. Returns null if the code is unknown.
+export async function getParticipantName(code: string): Promise<string | null> {
+  const row = await env.DB.prepare(
+    `SELECT full_name FROM participants
+      WHERE edition = ? AND participant_code = ?`,
   )
-    .bind(edition.id, `%${term}%`)
-    .all<{ participant_code: string; full_name: string }>();
+    .bind(edition.id, code)
+    .first<{ full_name: string }>();
 
-  return results.map((r) => ({ code: r.participant_code, name: r.full_name }));
+  return row?.full_name ?? null;
 }
 
 // Participant-facing card — low-sensitivity logistics ONLY.

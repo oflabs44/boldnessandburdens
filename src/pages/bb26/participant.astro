@@ -1,0 +1,270 @@
+---
+export const prerender = false;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { edition } from "../../config/editions/bb26";
+import { getParticipantName } from "../../lib/db";
+import { passCookie } from "../../lib/badge-pass";
+import qrSvg from "../../assets/badge-qr.svg?raw";
+
+// Accept "14", "BB26-14", "bb26014" etc. and normalise to "BB26-014".
+function normalizeCode(raw: string): string {
+  const v = raw.trim().toUpperCase().replace(/\s+/g, "");
+
+  if (/^\d+$/.test(v)) return `${edition.codePrefix}-${v.padStart(3, "0")}`;
+
+  const m = v.match(/^([A-Z]+)-?(\d+)$/);
+
+  return m ? `${m[1]}-${m[2].padStart(3, "0")}` : v;
+}
+
+// Light check: the entered word must match one of the participant's name parts.
+function nameMatches(fullName: string, entered: string): boolean {
+  const e = entered.trim().toLowerCase();
+
+  if (e.length < 2) return false;
+
+  return fullName.toLowerCase().split(/\s+/).includes(e);
+}
+
+let error = "";
+let idValue = Astro.url.searchParams.get("id") ?? "";
+
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData();
+
+  idValue = String(form.get("code") ?? "");
+  const code = normalizeCode(idValue);
+  const lastName = String(form.get("lastname") ?? "");
+  const fullName = code ? await getParticipantName(code) : null;
+
+  if (fullName && nameMatches(fullName, lastName)) {
+    return new Response(null, {
+      status: 303,
+      headers: {
+        location: `/bb26/${encodeURIComponent(code)}`,
+        "set-cookie": await passCookie(code, Astro.request),
+      },
+    });
+  }
+
+  error = "We couldn't match that ID and name. Check your BB26 ID and the spelling of your name.";
+}
+
+const shareUrl = `${edition.links.site}/bb26/participant`.replace(/^https?:\/\//, "");
+---
+
+<BaseLayout
+  title={`Your Pass · ${edition.shortName}`}
+  description="Open your digital conference badge — room, group and daily check-in."
+  noindex={true}
+  transparentHeader={true}
+>
+  <main class="desk">
+    <div class="desk__spot" aria-hidden="true"></div>
+
+    <section class="desk__inner">
+      <img class="desk__logo" src="/logo-black.png" alt="Boldness & Burdens Conference" width="600" height="630" />
+      <p class="desk__eyebrow">{edition.shortName}</p>
+      <h1 class="desk__title">Find your badge</h1>
+      <p class="desk__lead">Enter your BB26 ID and last name to open your pass.</p>
+
+      {error && <p class="desk__error">{error}</p>}
+
+      <form method="POST" class="form">
+        <label class="field">
+          <span>BB26 ID</span>
+          <input
+            name="code"
+            value={idValue}
+            placeholder="e.g. BB26-014"
+            autocomplete="off"
+            autocapitalize="characters"
+            required
+          />
+        </label>
+        <label class="field">
+          <span>Last name</span>
+          <input
+            name="lastname"
+            placeholder="Your surname"
+            autocomplete="family-name"
+            autocapitalize="words"
+            required
+          />
+        </label>
+        <button type="submit" class="go">Open my badge</button>
+      </form>
+
+      <details class="share">
+        <summary>Share or print this page</summary>
+        <div class="share__body">
+          <div class="share__qr" set:html={qrSvg}></div>
+          <p class="share__url">{shareUrl}</p>
+        </div>
+      </details>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .desk {
+    --gold-3: #9c7322;
+
+    position: relative;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2xl) var(--space-md) var(--space-3xl);
+    overflow: hidden;
+  }
+
+  .desk__spot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(120vw, 720px);
+    height: min(120vh, 720px);
+    transform: translate(-50%, -50%);
+    background: radial-gradient(closest-side, rgba(212, 135, 58, 0.18), transparent 70%);
+    pointer-events: none;
+  }
+
+  .desk__inner {
+    position: relative;
+    width: min(420px, 100%);
+    text-align: center;
+  }
+
+  .desk__logo {
+    display: block;
+    width: clamp(140px, 40vw, 184px);
+    height: auto;
+    margin: 0 auto -8px;
+  }
+
+  .desk__eyebrow {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 0.64rem;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--gold-3);
+  }
+
+  .desk__title {
+    font-family: var(--font-display);
+    font-size: clamp(2.6rem, 9vw, 3.4rem);
+    letter-spacing: 0.03em;
+    color: var(--color-charcoal);
+    margin: 6px 0 8px;
+  }
+
+  .desk__lead {
+    margin: 0 auto;
+    max-width: 32ch;
+    color: var(--color-charcoal-light);
+    font-size: 1rem;
+  }
+
+  .desk__error {
+    margin: var(--space-md) auto 0;
+    max-width: 34ch;
+    padding: 10px 14px;
+    background: #f7e4e4;
+    border: 1px solid #e3b7b7;
+    border-radius: 10px;
+    color: #7a2e2e;
+    font-size: 0.85rem;
+  }
+
+  .form {
+    margin-top: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    text-align: left;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field span {
+    font-family: var(--font-body);
+    font-size: 0.64rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-charcoal-light);
+  }
+  .field input {
+    width: 100%;
+    padding: 14px 16px;
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    color: #211a12;
+    background: var(--color-cream);
+    border: 1.5px solid #211a12;
+    border-radius: 12px;
+    outline: none;
+    transition: border-color 0.25s var(--ease-out);
+  }
+  .field input:focus { border-color: var(--color-accent); }
+
+  .go {
+    margin-top: 4px;
+    padding: 15px;
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #1e1610;
+    background: var(--color-accent);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.25s var(--ease-out), transform 0.25s var(--ease-out);
+  }
+  .go:hover { background: var(--color-accent-light); transform: translateY(-1px); }
+
+  /* ---- share / QR (collapsed by default) ---- */
+  .share {
+    margin-top: var(--space-xl);
+    text-align: center;
+  }
+  .share summary {
+    display: inline-flex;
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--gold-3);
+    cursor: pointer;
+    list-style: none;
+  }
+  .share summary::-webkit-details-marker { display: none; }
+  .share summary:hover { color: var(--color-accent-dark); }
+
+  .share__body {
+    margin-top: var(--space-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .share__qr {
+    width: 180px;
+    padding: 12px;
+    background: #fff;
+    border: 1px solid var(--color-cream-dark);
+    border-radius: 12px;
+  }
+  .share__qr :global(svg) { display: block; width: 100%; height: auto; }
+  .share__url {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--gold-3);
+  }
+</style>

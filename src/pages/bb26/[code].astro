@@ -4,8 +4,18 @@ export const prerender = false;
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { edition } from "../../config/editions/bb26";
 import { getCard } from "../../lib/db";
+import { isAuthed } from "../../lib/admin-auth";
+import { hasPass } from "../../lib/badge-pass";
 
 const { code } = Astro.params;
+
+// Badges are gated: you must have verified (BB26 ID + last name) on
+// /bb26/participant, or be a signed-in admin. This stops sequential codes from
+// being enumerated to read everyone's room assignment.
+if (code && !isAuthed(Astro.request) && !(await hasPass(Astro.request, code))) {
+  return Astro.redirect(`/bb26/participant?id=${encodeURIComponent(code)}`);
+}
+
 const card = code ? await getCard(code) : null;
 
 if (!card) {
