@@ -51,8 +51,6 @@ const attendedCount = card ? Object.keys(card.attendance).length : 0;
 const todayBerlin = new Date().toLocaleDateString("en-CA", {
   timeZone: "Europe/Berlin",
 });
-const todayDay = edition.days.find((d) => d.date === todayBerlin) ?? null;
-const checkedInToday = card ? card.attendance[todayBerlin] ?? null : null;
 
 // checked_in_at is stored UTC; show the clock time in Berlin.
 function fmtTime(ts: string): string {
@@ -112,26 +110,29 @@ function fmtTime(ts: string): string {
         <div class="sidebar">
         <section class="checkin-panel" aria-label="Daily check-in">
           <h2 class="checkin-panel__title">Daily check-in</h2>
+          <ul class="cdays">
+            {edition.days.map((d) => {
+              const at = card.attendance[d.date];
+              const isToday = d.date === todayBerlin;
 
-          {todayDay ? (
-            <Fragment>
-              <p class="checkin-panel__date">Today · {todayDay.long}</p>
-              {checkedInToday ? (
-                <p class="checkin-panel__today">✓ Checked in at {fmtTime(checkedInToday)}</p>
-              ) : (
-                <form method="POST" action="/bb26/api/checkin">
-                  <input type="hidden" name="code" value={card.code} />
-                  <input type="hidden" name="day" value={todayDay.date} />
-                  <button type="submit" class="checkin-panel__cta">Check in</button>
-                </form>
-              )}
-            </Fragment>
-          ) : (
-            <p class="checkin-panel__hint">
-              Check-in opens during the conference (16&ndash;19 July). A team member
-              can check you in if needed.
-            </p>
-          )}
+              return (
+                <li class={`cday ${at ? "is-in" : ""}`}>
+                  <span class="cday__label">{d.label}</span>
+                  {at ? (
+                    <span class="cday__done">✓ {fmtTime(at)}</span>
+                  ) : isToday ? (
+                    <form method="POST" action="/bb26/api/checkin">
+                      <input type="hidden" name="code" value={card.code} />
+                      <input type="hidden" name="day" value={d.date} />
+                      <button type="submit" class="cday__cta">Check in</button>
+                    </form>
+                  ) : (
+                    <button type="button" class="cday__cta" disabled>Check in</button>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
         </section>
 
         <nav class="links" aria-label="Conference information">
@@ -546,40 +547,52 @@ function fmtTime(ts: string): string {
   .checkin-panel {
     position: relative;
     width: 100%;
-    text-align: center;
   }
 
   .checkin-panel__title {
-    margin: 0;
+    margin: 0 0 var(--space-md);
     font-family: var(--display);
     font-weight: 400;
     font-size: 1.6rem;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: #241a12;
+    text-align: center;
   }
 
-  .checkin-panel__hint {
-    margin: 6px 0 0;
+  .cdays { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+
+  .cday {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 52px;
+    padding: 8px 8px 8px 16px;
+    background: var(--color-cream);
+    border: 1px solid #e3d6bd;
+    border-radius: 12px;
+  }
+  .cday.is-in { background: rgba(179, 214, 147, 0.18); border-color: #cfe0b8; }
+
+  .cday__label {
     font-family: var(--font-body);
-    font-size: 0.82rem;
-    line-height: 1.4;
-    color: var(--color-charcoal-light);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #241a12;
   }
 
-  .checkin-panel__date {
-    margin: 6px 0 14px;
+  .cday__done {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #3a6b2e;
+    padding-right: 8px;
+  }
+
+  .cday__cta {
     font-family: var(--font-body);
     font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--color-charcoal-light);
-  }
-
-  .checkin-panel__cta {
-    font-family: var(--font-body);
-    font-size: 0.95rem;
     font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -587,19 +600,16 @@ function fmtTime(ts: string): string {
     background: var(--color-accent-dark);
     border: none;
     border-radius: 999px;
-    padding: 14px 36px;
+    padding: 10px 22px;
     cursor: pointer;
     transition: background 0.2s var(--ease-out), transform 0.2s var(--ease-out);
   }
-
-  .checkin-panel__cta:hover { background: #b9641f; transform: translateY(-1px); }
-
-  .checkin-panel__today {
-    margin: 0;
-    font-family: var(--font-body);
-    font-size: 0.92rem;
-    font-weight: 600;
-    color: #3a6b2e;
+  .cday__cta:hover:not(:disabled) { background: #b9641f; transform: translateY(-1px); }
+  .cday__cta:disabled {
+    background: transparent;
+    color: #b9a585;
+    border: 1px solid #e3d6bd;
+    cursor: not-allowed;
   }
 
   /* ---- void ---- */
