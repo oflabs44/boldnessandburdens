@@ -129,7 +129,6 @@
 <div class="editor">
   <header class="profile">
     <div class="profile__id">
-      <h2 class="profile__name">{participant.name}</h2>
       <div class="tags">
         <span class="badge badge--mono">{participant.code}</span>
         <span class="badge" class:badge--positive={stayingOnCamp} class:badge--warn={!stayingOnCamp}>
@@ -247,13 +246,6 @@
     gap: var(--ad-5);
   }
   .profile__id { min-width: 0; }
-  .profile__name {
-    margin: 0 0 var(--ad-3);
-    font-size: clamp(1.5rem, 4vw, 2rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--ad-text);
-  }
   .tags { display: flex; flex-wrap: wrap; gap: var(--ad-2); align-items: center; }
   .pips { display: inline-flex; gap: 4px; }
   .pip { width: 8px; height: 8px; border-radius: 50%; background: transparent; border: 1.5px solid var(--ad-border-strong); }
@@ -460,8 +452,6 @@
   .btn--primary[disabled] { opacity: 0.6; cursor: default; }
 
   @media (max-width: 540px) {
-    .profile { align-items: flex-start; gap: var(--ad-3); }
-    .profile__name { font-size: 1.4rem; }
     .qr { width: 84px; }
     .grid { grid-template-columns: 1fr; }
   }
