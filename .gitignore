@@ -30,7 +30,7 @@ pnpm-debug.log*
 # local data & email logs
 data/
 emails/sent-log.json
-emails/preview.html
+emails/preview*.html
 
 # macOS-specific files
 .DS_Store

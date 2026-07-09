@@ -1,12 +1,225 @@
 ---
 import InfoPage from "../../components/InfoPage.astro";
+import Callout from "../../components/Callout.astro";
+
+const adults = [
+  { day: "Thu 16", time: "17:00–19:00", dish: "Pasta & minced meat sauce" },
+  { day: "Fri 17", time: "15:00–19:00", dish: "White rice & stew with chicken" },
+  { day: "Sat 18", time: "15:00–19:00", dish: "Jollof rice & turkey / chicken" },
+  { day: "Sun 19", time: "08:00 onwards", dish: "Bread & eggs — light breakfast before departure" },
+];
+
+const children = [
+  {
+    label: "Thursday 16 July",
+    note: "Arrival day — dinner only.",
+    meals: [
+      { name: "Main meal", time: "17:00–19:00", dish: "Pasta & minced meat sauce" },
+    ],
+  },
+  {
+    label: "Friday 17 July",
+    meals: [
+      { name: "Breakfast", time: "09:00–10:00", dish: "Bread, eggs, hot dogs & noodles" },
+      { name: "Light lunch", time: "12:00–13:00", dish: "Snacks, fruit & juice" },
+      { name: "Main meal", time: "15:00–19:00", dish: "White rice & stew with chicken" },
+    ],
+  },
+  {
+    label: "Saturday 18 July",
+    meals: [
+      { name: "Breakfast", time: "09:00–10:00", dish: "Bread, eggs, hot dogs & noodles" },
+      { name: "Light lunch", time: "12:00–13:00", dish: "Snacks, fruit & juice" },
+      { name: "Main meal", time: "15:00–19:00", dish: "Jollof rice & turkey / chicken" },
+    ],
+  },
+  {
+    label: "Sunday 19 July",
+    note: "Departure day — bread & eggs before you travel.",
+    meals: [
+      { name: "Breakfast", time: "08:00 onwards", dish: "Bread & eggs" },
+    ],
+  },
+];
 ---
 
 <InfoPage
   title="Meal Timetable"
-  intro="Mealtimes for the conference."
+  intro="Mealtimes across the conference, for adults and children."
 >
-  <p class="note">
-    The meal timetable will be published here soon.
-  </p>
+  <Callout>
+    Please inform the welfare team of any food allergies or dietary requirements
+    on arrival. A bottle of water is provided with each meal.
+  </Callout>
+
+  <section class="group">
+    <h2>Adults</h2>
+    <Callout>
+      Breakfast is not provided for adults. One main meal per day, served
+      during the afternoon break.
+    </Callout>
+
+    <dl class="meals">
+      {adults.map((m) => (
+        <div class="meal">
+          <dt>
+            <span class="meal__day">{m.day}</span>
+            <span class="meal__time">{m.time}</span>
+          </dt>
+          <dd>{m.dish}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+
+  <section class="group">
+    <h2>Children</h2>
+    <Callout>
+      Children are fed at three points each day — breakfast, a light lunch, and
+      the main meal with everyone in the afternoon.
+    </Callout>
+
+    {children.map((day) => (
+      <div class="cday">
+        <h3>{day.label}</h3>
+        <div class="cmeals">
+          {day.meals.map((meal) => (
+            <div class="cmeal">
+              <span class="cmeal__name">{meal.name}</span>
+              <span class="cmeal__time">{meal.time}</span>
+              <span class="cmeal__dish">{meal.dish}</span>
+            </div>
+          ))}
+        </div>
+        {day.note && <p class="cday__note">{day.note}</p>}
+      </div>
+    ))}
+  </section>
+
 </InfoPage>
+
+<style>
+  /* Halve the global <section> vertical padding (meant for landing-page
+     bands): keeps the groups separated without the doubled-up gap. */
+  .group {
+    margin: 0;
+    padding: var(--space-md) 0;
+  }
+
+  @media (min-width: 480px) {
+    .group {
+      padding: var(--space-lg) 0;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .group {
+      padding: var(--space-xl) 0;
+    }
+  }
+
+  .group h2 {
+    margin-top: 0;
+  }
+
+  /* Adults list */
+  .meals {
+    margin: var(--space-lg) 0 0;
+  }
+
+  .meal {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-md);
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-cream-dark);
+  }
+
+  .meal:last-child {
+    border-bottom: none;
+  }
+
+  .meal dt {
+    flex: 0 0 auto;
+    width: 130px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .meal__day {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--color-accent-dark);
+  }
+
+  .meal__time {
+    font-variant-numeric: tabular-nums;
+    font-size: 0.8rem;
+    color: var(--color-charcoal-light);
+  }
+
+  .meal dd {
+    margin: 0;
+    flex: 1;
+    color: var(--color-charcoal-light);
+  }
+
+  /* Children per-day blocks */
+  .cday {
+    margin: var(--space-lg) 0 0;
+    padding: 0 0 var(--space-lg);
+    border-bottom: 1px solid var(--color-cream-dark);
+  }
+
+  .cday:last-of-type {
+    border-bottom: none;
+  }
+
+  .cday h3 {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    margin: 0 0 var(--space-sm);
+  }
+
+  .cmeal {
+    display: grid;
+    grid-template-columns: 96px 110px 1fr;
+    gap: var(--space-md);
+    align-items: baseline;
+    padding: 8px 0;
+  }
+
+  .cmeal__name {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--color-charcoal);
+  }
+
+  .cmeal__time {
+    font-variant-numeric: tabular-nums;
+    font-size: 0.82rem;
+    color: var(--color-charcoal-light);
+  }
+
+  .cmeal__dish {
+    color: var(--color-charcoal-light);
+  }
+
+  .cday__note {
+    margin: var(--space-sm) 0 0 !important;
+    font-style: italic;
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 480px) {
+    .cmeal {
+      grid-template-columns: 1fr;
+      gap: 2px;
+      padding: 10px 0;
+    }
+  }
+</style>

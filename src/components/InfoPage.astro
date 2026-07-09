@@ -5,9 +5,10 @@ import { edition } from "../config/editions/bb26";
 interface Props {
   title: string;
   intro?: string;
+  hideBack?: boolean;
 }
 
-const { title, intro } = Astro.props;
+const { title, intro, hideBack = false } = Astro.props;
 ---
 
 <BaseLayout title={`${title} · ${edition.shortName}`} noindex={true} transparentHeader={true}>
@@ -15,7 +16,9 @@ const { title, intro } = Astro.props;
     <div class="info__spot" aria-hidden="true"></div>
 
     <article class="info__inner">
-      <a class="info__back" href="/bb26" data-back>← Back to your pass</a>
+      {!hideBack && (
+        <a class="info__back" href="/bb26" data-back>← Back to your pass</a>
+      )}
       <p class="info__eyebrow">{edition.shortName}</p>
       <h1 class="info__title">{title}</h1>
       {intro && <p class="info__intro">{intro}</p>}
@@ -102,7 +105,13 @@ const { title, intro } = Astro.props;
   }
 
   .info__body {
-    margin-top: var(--space-2xl);
+    margin-top: var(--space-xl);
+  }
+
+  /* The first block sits right under the intro — no doubled-up top margin. */
+  .info__body > :global(h2:first-child),
+  .info__body > :global(section:first-child > h2:first-child) {
+    margin-top: 0;
   }
 
   /* slot content (unscoped) */
@@ -141,13 +150,5 @@ const { title, intro } = Astro.props;
     height: 8px;
     border-radius: 50%;
     background: var(--color-accent);
-  }
-
-  .info__body :global(.note) {
-    padding: var(--space-lg);
-    background: var(--color-cream-dark);
-    border-radius: 14px;
-    color: var(--color-charcoal-light);
-    font-size: 0.95rem;
   }
 </style>

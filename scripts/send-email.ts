@@ -25,6 +25,7 @@ const { values } = parseArgs({
     force: { type: "boolean", default: false },
     subject: { type: "string", short: "s" },
     emails: { type: "string" },
+    codes: { type: "string" },
   },
   strict: true,
 });
@@ -32,7 +33,7 @@ const { values } = parseArgs({
 // --- Validate template ---
 
 if (!values.template) {
-  console.error("Usage: bun scripts/send-email.ts --template <name> [--to email] [--emails a@x,b@x] [--dry-run] [--force]");
+  console.error("Usage: bun scripts/send-email.ts --template <name> [--to email] [--emails a@x,b@x] [--codes BB26-001,BB26-007] [--dry-run] [--force]");
   console.error("");
   console.error("Templates available:");
 
@@ -56,7 +57,33 @@ if (!existsSync(templatePath)) {
 // --- Load templates ---
 
 const baseHtml = readFileSync(join(EMAILS_DIR, "base.html"), "utf-8");
-const contentHtml = readFileSync(templatePath, "utf-8");
+
+// Language-variant routing: a template `foo` may have a German sibling
+// `foo-de.html`. When the requested template is the base and the sibling
+// exists, each D1 recipient is sent the variant matching their
+// preferred_language; otherwise the requested template goes to everyone.
+const baseTemplate = templateName.replace(/-de$/, "");
+const routeByLanguage =
+  !templateName.endsWith("-de") &&
+  existsSync(join(TEMPLATES_DIR, `${baseTemplate}-de.html`));
+
+// The template a given recipient's language resolves to.
+function templateFor(lang: string): string {
+  return routeByLanguage && lang === "de" ? `${baseTemplate}-de` : templateName;
+}
+
+const contentCache = new Map<string, string>();
+
+function contentFor(tpl: string): string {
+  let cached = contentCache.get(tpl);
+
+  if (cached === undefined) {
+    cached = readFileSync(join(TEMPLATES_DIR, `${tpl}.html`), "utf-8");
+    contentCache.set(tpl, cached);
+  }
+
+  return cached;
+}
 
 // --- Load recipients (single source: the D1 `participants` roster) ---
 
@@ -70,15 +97,23 @@ interface Registrant {
   tshirt_size: string;
   emergency_contact_name: string;
   emergency_contact_phone: string;
+  // Language for this address's mail; picks the template variant (en/de).
+  // Shared-email families share one address, so the group's first row wins.
+  preferred_language: string;
+  // Everyone sharing this email address (families share one address), each
+  // with their own BB26 ID — needed for templates that show the participant
+  // their conference ID (badge lookup needs ID + last name).
+  members: { name: string; code: string }[];
 }
 
-// Pull the curated roster straight from D1 via wrangler, deduped by email
-// (families share one address, so one send per address). Children have no
-// email and are excluded by the `email IS NOT NULL` filter.
+// Pull the curated roster straight from D1 via wrangler, grouped by email
+// (families share one address, so one send per address, but each member
+// keeps their own participant_code). Children have no email and are
+// excluded by the `email IS NOT NULL` filter.
 function fetchFromD1(): Registrant[] {
   const sql =
-    "SELECT full_name, email, phone, city, gender, wants_tshirt, tshirt_size, " +
-    "emergency_contact_name, emergency_contact_phone " +
+    "SELECT participant_code, full_name, email, phone, city, gender, wants_tshirt, tshirt_size, " +
+    "emergency_contact_name, emergency_contact_phone, preferred_language " +
     "FROM participants " +
     `WHERE edition = '${EDITION}' AND email IS NOT NULL AND trim(email) != '' ` +
     "ORDER BY participant_code";
@@ -101,7 +136,16 @@ function fetchFromD1(): Registrant[] {
   for (const row of rows) {
     const email = (row.email ?? "").trim().toLowerCase();
 
-    if (!email || byEmail.has(email)) {
+    if (!email) {
+      continue;
+    }
+
+    const member = { name: row.full_name ?? "Participant", code: row.participant_code ?? "" };
+
+    const existing = byEmail.get(email);
+
+    if (existing) {
+      existing.members.push(member);
       continue;
     }
 
@@ -115,6 +159,8 @@ function fetchFromD1(): Registrant[] {
       tshirt_size: row.tshirt_size ?? "",
       emergency_contact_name: row.emergency_contact_name ?? "",
       emergency_contact_phone: row.emergency_contact_phone ?? "",
+      preferred_language: row.preferred_language ?? "en",
+      members: [member],
     });
   }
 
@@ -132,6 +178,8 @@ function blankRegistrant(email: string): Registrant {
     tshirt_size: "",
     emergency_contact_name: "",
     emergency_contact_phone: "",
+    preferred_language: "en",
+    members: [{ name: "Friend", code: "BB26-000" }],
   };
 }
 
@@ -139,11 +187,26 @@ let registrants: Registrant[];
 
 if (values.emails) {
   // Ad-hoc override: send to an explicit comma-separated list (still deduped).
+  // Uses placeholder data (name "Friend", no real code) — not sourced from D1.
   registrants = values.emails.split(",").map((e) => blankRegistrant(e));
 } else {
   console.log(`Loading roster from D1 (${D1_DATABASE}, edition ${EDITION})...`);
   registrants = fetchFromD1();
   console.log(`Loaded ${registrants.length} unique recipients.`);
+
+  if (values.codes) {
+    // Target specific participants (by their real BB26 code) while keeping
+    // real D1 data. Also trims each registrant's `members` down to just the
+    // requested codes, so a shared-email family member's own code doesn't
+    // leak the rest of their household's codes into the email.
+    const wanted = new Set(values.codes.split(",").map((c) => c.trim().toUpperCase()));
+
+    registrants = registrants
+      .map((r) => ({ ...r, members: r.members.filter((m) => wanted.has(m.code.toUpperCase())) }))
+      .filter((r) => r.members.length > 0);
+
+    console.log(`Filtered to ${registrants.length} recipient(s) matching --codes.`);
+  }
 }
 
 // --- Sent log ---
@@ -199,9 +262,11 @@ const defaultHeader = `<div class="email-header">
             <div class="divider"></div>`;
 
 // Templates that lead with their own branded graphic skip the text header.
-const noHeaderTemplates = new Set(["30-day-countdown"]);
+const noHeaderTemplates = new Set(["30-day-countdown", "20-day-countdown"]);
 
-const header = noHeaderTemplates.has(templateName) ? "" : defaultHeader;
+function headerFor(tpl: string): string {
+  return noHeaderTemplates.has(tpl) ? "" : defaultHeader;
+}
 
 // --- Inline images embedded via CID (referenced as src="cid:<cid>") ---
 
@@ -209,9 +274,14 @@ const inlineImages: Record<string, { filename: string; path: string; cid: string
   "30-day-countdown": [
     { filename: "countdown-30.jpg", path: join(ROOT, "public", "countdown-30.jpg"), cid: "countdown30" },
   ],
+  "20-day-countdown": [
+    { filename: "countdown-20.jpg", path: join(ROOT, "public", "countdown-20.jpg"), cid: "countdown20" },
+  ],
 };
 
-const attachments = inlineImages[templateName] || [];
+function attachmentsFor(tpl: string) {
+  return inlineImages[tpl] || [];
+}
 
 // --- Subject lines per template ---
 
@@ -224,7 +294,10 @@ const defaultSubjects: Record<string, string> = {
   "tshirt-signup": "B&B Conference T-Shirt Sign Up is Open!",
   "venue-change": "Important Update: B&B Conference 2026 Venue Change",
   "30-day-countdown": "30 Days to Go — Boldness & Burdens Conference 2026",
+  "20-day-countdown": "20 Days to Go: The Meeting is Near!",
   "tshirt-closing-reminder": "BBC 2026 T-Shirt Orders Close Tomorrow!",
+  "badge-onboarding": "Your BB26 Digital Pass Is Ready",
+  "badge-onboarding-de": "Dein BB26 Digital-Ausweis ist bereit",
 };
 
 // --- SMTP setup ---
@@ -257,10 +330,12 @@ if (values.to) {
 
 // --- Send ---
 
-const subject = values.subject || defaultSubjects[templateName] || `BBC'26 Update`;
+// Per-recipient subject: the override wins, else the resolved template's default.
+function subjectFor(tpl: string): string {
+  return values.subject || defaultSubjects[tpl] || `BBC'26 Update`;
+}
 
-console.log(`\nTemplate: ${templateName}`);
-console.log(`Subject:  ${subject}`);
+console.log(`\nTemplate: ${templateName}${routeByLanguage ? " (auto-routing en/de by preferred_language)" : ""}`);
 console.log(`From:     ${fromAddress}`);
 console.log(`Mode:     ${values["dry-run"] ? "DRY RUN" : "LIVE"}`);
 console.log(`Recipients: ${recipients.length}`);
@@ -270,6 +345,8 @@ let sent = 0;
 let skipped = 0;
 let errors = 0;
 
+const previewed = new Set<string>();
+
 for (const registrant of recipients) {
   const email = registrant.email?.toLowerCase();
 
@@ -277,12 +354,26 @@ for (const registrant of recipients) {
     continue;
   }
 
-  if (!values.force && alreadySent(email, templateName)) {
-    console.log(`  SKIP  ${email} (already sent)`);
+  // Resolve everything for this recipient's language (falls back to the
+  // requested template when there's no variant / no routing).
+  const tpl = templateFor(registrant.preferred_language);
+  const subject = subjectFor(tpl);
+
+  if (!values.force && alreadySent(email, tpl)) {
+    console.log(`  SKIP  ${email} (already sent: ${tpl})`);
     skipped++;
 
     continue;
   }
+
+  // Most addresses cover one person, but families share an address — each
+  // member keeps their own BB26 ID, so templates that need to show the
+  // conference ID render one line per code (`codes`), plus a single `code`
+  // for the common one-person case. No names: recipients already know
+  // whose email this is.
+  const codes = registrant.members
+    .map((m) => `<p style="margin: 0 0 4px;"><span class="highlight">${m.code}</span></p>`)
+    .join("\n");
 
   const vars: Record<string, string> = {
     name: registrant.full_name || "Participant",
@@ -294,21 +385,26 @@ for (const registrant of recipients) {
     tshirt_size: registrant.tshirt_size || "",
     emergency_contact_name: registrant.emergency_contact_name || "",
     emergency_contact_phone: registrant.emergency_contact_phone || "",
+    code: registrant.members[0]?.code || "",
+    codes,
     subject,
   };
 
-  const content = render(contentHtml, vars);
-  const html = render(baseHtml, { ...vars, header, content });
+  const content = render(contentFor(tpl), vars);
+  const html = render(baseHtml, { ...vars, header: headerFor(tpl), content });
 
   if (values["dry-run"]) {
-    console.log(`  WOULD SEND  ${email} (${registrant.full_name})`);
+    console.log(`  WOULD SEND  ${email} (${registrant.full_name}) [${tpl}]`);
 
-    if (sent === 0) {
-      const previewPath = join(ROOT, "emails", "preview.html");
+    // One preview per distinct resolved template, so mixed-language runs show
+    // both variants. First variant keeps the canonical preview.html name.
+    if (!previewed.has(tpl)) {
+      const name = previewed.size === 0 ? "preview.html" : `preview-${tpl}.html`;
+      const previewPath = join(ROOT, "emails", name);
       writeFileSync(previewPath, html);
-      console.log(`\n  Preview saved: ${previewPath}`);
       execSync(`open "${previewPath}"`);
-      console.log("  Opened in browser.\n");
+      console.log(`\n  Preview saved & opened: ${previewPath}\n`);
+      previewed.add(tpl);
     }
 
     sent++;
@@ -322,11 +418,11 @@ for (const registrant of recipients) {
       to: email,
       subject,
       html,
-      attachments,
+      attachments: attachmentsFor(tpl),
     });
 
-    markSent(email, templateName);
-    console.log(`  SENT  ${email} (${registrant.full_name})`);
+    markSent(email, tpl);
+    console.log(`  SENT  ${email} (${registrant.full_name}) [${tpl}]`);
     sent++;
   } catch (err) {
     console.error(`  FAIL  ${email}: ${(err as Error).message}`);

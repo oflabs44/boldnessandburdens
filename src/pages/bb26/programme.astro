@@ -1,13 +1,153 @@
 ---
 import InfoPage from "../../components/InfoPage.astro";
+
+const days = [
+  {
+    label: "Thursday 16 July",
+    slots: [
+      { time: "17:00–19:00", session: "Arrival, registration & dinner" },
+      { time: "19:00–19:15", session: "Opening remarks & prayer" },
+      { time: "19:15–19:30", session: "Worship" },
+      { time: "19:45–21:00", session: "Preaching" },
+      { time: "21:00–23:00", session: "Prayer session" },
+      { time: "23:00–06:30", session: "Announcements & rest" },
+    ],
+  },
+  {
+    label: "Friday 17 July",
+    slots: [
+      { time: "06:30–07:15", session: "Prayer session" },
+      { time: "07:15–07:45", session: "Worship" },
+      { time: "07:45–09:00", session: "Teaching" },
+      { time: "09:00–10:00", session: "Break & breakfast" },
+      { time: "10:00–10:30", session: "Prayer" },
+      { time: "10:30–11:00", session: "Worship" },
+      { time: "11:00–12:00", session: "Teaching" },
+      { time: "12:00–12:30", session: "Announcements & break" },
+      { time: "12:30–13:00", session: "Prayer" },
+      { time: "13:30–14:00", session: "Worship" },
+      { time: "14:00–15:00", session: "Teaching" },
+      { time: "15:00–19:00", session: "Lunch break & rest" },
+      { time: "19:00–19:30", session: "Prayer" },
+      { time: "19:30–20:00", session: "Worship" },
+      { time: "20:00–22:30", session: "Teaching/word (Ignite Xperience)" },
+      { time: "22:30–06:30", session: "Rest" },
+    ],
+  },
+  {
+    label: "Saturday 18 July",
+    slots: [
+      { time: "06:30–07:00", session: "Prayer" },
+      { time: "07:00–07:30", session: "Worship" },
+      { time: "07:30–09:00", session: "Teaching" },
+      { time: "09:00–10:00", session: "Breakfast" },
+      { time: "10:00–10:30", session: "Prayer" },
+      { time: "10:30–11:00", session: "Worship" },
+      { time: "11:00–13:00", session: "Teaching" },
+      { time: "13:00–13:30", session: "Break" },
+      { time: "13:30–13:45", session: "Worship" },
+      { time: "13:45–15:00", session: "Teaching" },
+      { time: "15:00–19:00", session: "Long break" },
+      { time: "19:00–19:30", session: "Prayer (Grand Finale)" },
+      { time: "19:30–20:00", session: "Worship" },
+      { time: "20:00–22:30", session: "Teaching/word (Ignite Xperience)" },
+      { time: "22:30–06:30", session: "Rest" },
+    ],
+  },
+  {
+    label: "Sunday 19 July",
+    slots: [
+      { time: "06:30–06:45", session: "Prayer" },
+      { time: "06:45–07:00", session: "Worship" },
+      { time: "07:00–07:30", session: "Teaching" },
+      { time: "07:30–08:00", session: "Closing session" },
+    ],
+  },
+];
 ---
 
 <InfoPage
   title="Order of Programme"
   intro="The daily flow of sessions, prayer and gatherings."
 >
-  <p class="note">
-    The full programme schedule will be published here soon. Please check back
-    closer to the conference.
-  </p>
+  {days.map((day) => (
+    <section class="day">
+      <h2>{day.label}</h2>
+      <dl class="schedule">
+        {day.slots.map((s) => (
+          <div class="slot">
+            <dt>{s.time}</dt>
+            <dd>{s.session}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  ))}
 </InfoPage>
+
+<style>
+  /* Halve the global <section> vertical padding (meant for landing-page
+     bands): keeps the days separated without the doubled-up gap. */
+  .day {
+    margin: 0;
+    padding: var(--space-md) 0;
+  }
+
+  @media (min-width: 480px) {
+    .day {
+      padding: var(--space-lg) 0;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .day {
+      padding: var(--space-xl) 0;
+    }
+  }
+
+  .day h2 {
+    margin-top: 0;
+  }
+
+  .schedule {
+    margin: 0;
+  }
+
+  .slot {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-md);
+    padding: 10px 0;
+    border-bottom: 1px solid var(--color-cream-dark);
+  }
+
+  .slot:last-child {
+    border-bottom: none;
+  }
+
+  .slot dt {
+    flex: 0 0 auto;
+    width: 110px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--color-accent-dark);
+  }
+
+  .slot dd {
+    margin: 0;
+    flex: 1;
+    color: var(--color-charcoal-light);
+  }
+
+  @media (max-width: 420px) {
+    .slot {
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .slot dt {
+      width: auto;
+    }
+  }
+</style>

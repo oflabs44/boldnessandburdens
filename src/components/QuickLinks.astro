@@ -1,0 +1,135 @@
+---
+// Shared "public info" nav — rules, programme, giving, meals. Used both from
+// the participant card sidebar and the public /bb26 hub.
+interface Props {
+  includeFindPass?: boolean;
+}
+
+const { includeFindPass = false } = Astro.props;
+---
+
+<nav class="links" aria-label="Conference information">
+  {includeFindPass && (
+    <a class="qlink" href="/bb26/participant">
+      <span class="qlink__ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="5" width="18" height="14" rx="2" />
+          <circle cx="9" cy="11" r="2" />
+          <path d="M15 10h3M15 13h3M6 16.5c.7-1.5 2-2 3-2s2.3.5 3 2" />
+        </svg>
+      </span>
+      <span class="qlink__txt"><b>Find Your Pass</b><small>Look up your BB26 ID</small></span>
+      <span class="qlink__arr" aria-hidden="true">→</span>
+    </a>
+  )}
+
+  <a class="qlink" href="/bb26/rules">
+    <span class="qlink__ico" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="8" y="3" width="8" height="4" rx="1" />
+        <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
+        <path d="M9 12h6M9 16h6" />
+      </svg>
+    </span>
+    <span class="qlink__txt"><b>Conference Rules</b><small>Camp guidelines</small></span>
+    <span class="qlink__arr" aria-hidden="true">→</span>
+  </a>
+
+  <a class="qlink" href="/bb26/programme">
+    <span class="qlink__ico" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 7v5l3 2" />
+      </svg>
+    </span>
+    <span class="qlink__txt"><b>Order of Programme</b><small>Daily schedule</small></span>
+    <span class="qlink__arr" aria-hidden="true">→</span>
+  </a>
+
+  <a class="qlink" href="/bb26/giving">
+    <span class="qlink__ico" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.8 8.6c0 4.5-7.2 9.4-8.5 10.2a.6.6 0 0 1-.6 0C10.4 18 3.2 13.1 3.2 8.6 3.2 6 5.1 4 7.5 4c1.6 0 3.1.9 3.9 2.3a.7.7 0 0 0 1.2 0C13.4 4.9 14.9 4 16.5 4c2.4 0 4.3 2 4.3 4.6Z" />
+      </svg>
+    </span>
+    <span class="qlink__txt"><b>Giving</b><small>Support the conference</small></span>
+    <span class="qlink__arr" aria-hidden="true">→</span>
+  </a>
+
+  <a class="qlink" href="/bb26/meals">
+    <span class="qlink__ico" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 3v7a2 2 0 0 0 2 2v9M7 3v6M9 3v6M9 3v0" />
+        <path d="M18 3c-1.4 0-2.6 1.7-2.6 4s1.2 4 2.6 4v9" />
+      </svg>
+    </span>
+    <span class="qlink__txt"><b>Meal Timetable</b><small>Daily mealtimes</small></span>
+    <span class="qlink__arr" aria-hidden="true">→</span>
+  </a>
+</nav>
+
+<style>
+  .links {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border-top: 1px solid #e3d6bd;
+  }
+
+  .qlink {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 4px;
+    color: #241a12;
+    border-bottom: 1px solid #e3d6bd;
+  }
+
+  .qlink__ico {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    color: var(--color-accent-dark);
+    transition: color 0.25s var(--ease-out);
+  }
+
+  .qlink__ico svg { width: 24px; height: 24px; }
+
+  .qlink__txt { display: flex; flex-direction: column; line-height: 1.1; flex: 1; }
+
+  .qlink__txt b {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 1.2rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: color 0.25s var(--ease-out);
+  }
+
+  .qlink__txt small {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    color: var(--color-charcoal-light);
+    margin-top: 3px;
+  }
+
+  .qlink__arr {
+    font-family: var(--font-body);
+    color: var(--color-accent-dark);
+    font-size: 1.1rem;
+    transition: transform 0.25s var(--ease-out);
+  }
+
+  .qlink:hover .qlink__txt b,
+  .qlink:focus .qlink__txt b,
+  .qlink:hover .qlink__ico,
+  .qlink:focus .qlink__ico {
+    color: var(--color-accent-dark);
+  }
+
+  .qlink:hover .qlink__arr,
+  .qlink:focus .qlink__arr {
+    transform: translateX(4px);
+  }
+</style>

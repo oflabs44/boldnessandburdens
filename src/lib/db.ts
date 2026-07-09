@@ -237,6 +237,46 @@ export async function updateParticipant(
   return res.success;
 }
 
+// A public programme signup (post-accommodation phase). Lands in the separate
+// `programme_registrations` table, never in the curated `participants` roster.
+export interface ProgrammeRegistrationInput {
+  fullName: string;
+  email: string;
+  phone: string | null;
+  gender: string | null;
+  city: string | null;
+  photoConsent: string | null;
+  participationConsent: string | null;
+  consentDate: string | null;
+}
+
+// Public: record one programme registration. Add-only; no dedupe (a person may
+// legitimately re-submit, and the admin reconciles later).
+export async function createProgrammeRegistration(
+  input: ProgrammeRegistrationInput,
+): Promise<boolean> {
+  const res = await env.DB.prepare(
+    `INSERT INTO programme_registrations
+       (edition, full_name, email, phone, gender, city,
+        photo_consent, participation_consent, consent_date)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  )
+    .bind(
+      edition.id,
+      input.fullName,
+      input.email,
+      input.phone,
+      input.gender,
+      input.city,
+      input.photoConsent,
+      input.participationConsent,
+      input.consentDate,
+    )
+    .run();
+
+  return res.success;
+}
+
 const isConferenceDay = (day: string) =>
   edition.days.some((d) => d.date === day);
 

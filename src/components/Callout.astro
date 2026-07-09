@@ -1,0 +1,43 @@
+---
+// The single, site-wide callout. One consistent look everywhere — a soft
+// rounded panel, no coloured borders or per-use variants. Pass an optional
+// title; everything else goes in the default slot.
+interface Props {
+  title?: string;
+}
+
+const { title } = Astro.props;
+---
+
+<aside class="callout">
+  {title && <p class="callout__title">{title}</p>}
+  <slot />
+</aside>
+
+<style>
+  .callout {
+    padding: var(--space-lg);
+    background: var(--color-cream-dark);
+    border-radius: 14px;
+    color: var(--color-charcoal-light);
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .callout__title {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-charcoal);
+    margin: 0 0 var(--space-xs);
+  }
+
+  /* Slotted paragraphs sit flush; stacked ones get a small gap. */
+  .callout :global(p) {
+    margin: 0;
+  }
+
+  .callout :global(p + p) {
+    margin-top: var(--space-sm);
+  }
+</style>

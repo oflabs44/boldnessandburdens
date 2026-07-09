@@ -26,10 +26,12 @@
     participant,
     days,
     badgeQr,
+    cardHref,
   }: {
     participant: Participant;
     days: Day[];
     badgeQr: string;
+    cardHref: string;
   } = $props();
 
   // Editable working copies seeded from the prop's initial value. untrack()
@@ -161,15 +163,20 @@
       </div>
     </div>
 
-    <button
-      type="button"
-      class="qr"
-      onclick={() => qrDialog.showModal()}
-      aria-label={`Enlarge ${participant.name}'s badge QR to scan`}
-    >
-      <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-      {@html badgeQr}
-    </button>
+    <div class="badge-actions">
+      <button
+        type="button"
+        class="qr"
+        onclick={() => qrDialog.showModal()}
+        aria-label={`Enlarge ${participant.name}'s badge QR to scan`}
+      >
+        <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+        {@html badgeQr}
+      </button>
+      <a class="btn btn--ghost" href={cardHref} target="_blank" rel="noopener">
+        View card
+      </a>
+    </div>
   </header>
 
   <dialog
@@ -274,8 +281,15 @@
   .pip { width: 8px; height: 8px; border-radius: 50%; background: transparent; border: 1.5px solid var(--ad-border-strong); }
   .pip--on { background: var(--ad-positive); border-color: var(--ad-positive); }
 
-  .qr {
+  .badge-actions {
     flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--ad-2);
+  }
+
+  .qr {
     display: block;
     width: 104px;
     padding: 7px;

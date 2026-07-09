@@ -88,9 +88,20 @@ data/
 ### Adding new email templates
 
 1. Create `emails/templates/<name>.html` with the body content
-2. Use `{{name}}`, `{{email}}`, `{{city}}`, etc. for dynamic fields
+2. Use `{{name}}`, `{{email}}`, `{{city}}`, `{{code}}`, `{{codes}}`, etc. for dynamic fields
 3. Add default subject to `defaultSubjects` in `scripts/send-email.ts`
 4. Send with `bun scripts/send-email.ts --template <name>`
+
+### Per-language sends (auto-routing)
+
+Each participant has a `preferred_language` column in D1 (`en` | `de`, defaults
+to `en`; editable in `/bb26/admin`). A template `foo` may have a German sibling
+`foo-de.html`. When you run `--template foo`, the script sends each recipient the
+variant matching their `preferred_language` (English `foo`, German `foo-de`);
+subject follows the resolved variant via `defaultSubjects`. So author both files,
+add both subjects, and send once with the **base** name — no need to split
+recipients. Templates with no `-de` sibling go to everyone unchanged. The
+sent-log tracks per resolved template, so `foo` and `foo-de` are independent.
 
 ### SMTP config
 

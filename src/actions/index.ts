@@ -5,6 +5,7 @@ import {
   updateParticipant,
   markAttendance,
   setArrived,
+  createProgrammeRegistration,
 } from "../lib/db";
 import { isAuthed } from "../lib/admin-auth";
 
@@ -80,6 +81,46 @@ export const server = {
         phone: clean(input.phone),
         city: clean(input.city),
         stayingOnCamp: !!input.staying_on_camp,
+      });
+
+      return { ok: true };
+    },
+  }),
+
+  // Public: programme registration (accommodation has closed). Anyone can
+  // submit; the row lands in `programme_registrations`, kept apart from the
+  // curated roster. On success the page redirects to /success (PRG).
+  registerProgramme: defineAction({
+    accept: "form",
+    input: z.object({
+      full_name: z.string().trim().min(1, "Please enter your full name."),
+      email: z.string().trim().email("Please enter a valid email address."),
+      phone: z.string().trim().min(1, "Please enter a phone number."),
+      gender: z.enum(["female", "male"], {
+        message: "Please select a gender.",
+      }),
+      city: z.string().optional(),
+      program_acknowledged: z
+        .boolean()
+        .refine((v) => v, "Please confirm you have read the programme details."),
+      photo_consent: z
+        .boolean()
+        .refine((v) => v, "Photo and video consent is required."),
+      participation_consent: z
+        .boolean()
+        .refine((v) => v, "Participation consent is required."),
+      consent_date: z.string().min(1, "Please provide a date."),
+    }),
+    handler: async (input) => {
+      await createProgrammeRegistration({
+        fullName: input.full_name,
+        email: input.email.toLowerCase(),
+        phone: clean(input.phone),
+        gender: input.gender,
+        city: clean(input.city),
+        photoConsent: "yes",
+        participationConsent: "yes",
+        consentDate: input.consent_date,
       });
 
       return { ok: true };

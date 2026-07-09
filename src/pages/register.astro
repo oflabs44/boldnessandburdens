@@ -1,0 +1,592 @@
+---
+export const prerender = false;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { actions, isInputError } from 'astro:actions';
+
+// PRG: on a successful submit, bounce to the thank-you page.
+const result = Astro.getActionResult(actions.registerProgramme);
+
+if (result && !result.error) {
+  return Astro.redirect('/success');
+}
+
+const fieldErrors = result && isInputError(result.error) ? result.error.fields : {};
+const hadError = !!(result && result.error);
+---
+
+<BaseLayout
+  title="Register"
+  description="Register for the Boldness and Burdens Conference 2026 programme. July 16-19 in Berlin."
+  canonicalPath="/register"
+>
+  <main>
+    <!-- Header -->
+    <header class="page-header">
+      <div class="container container--narrow">
+        <a href="/" class="back-link">&larr; Back to home</a>
+        <h1 class="page-title animate-fade-in-up">Programme Registration</h1>
+        <p class="page-subtitle animate-fade-in delay-1">Boldness & Burdens Conference 2026</p>
+        <div class="divider animate-fade-in delay-2"></div>
+      </div>
+    </header>
+
+    <!-- Registration Form -->
+    <section class="form-section">
+      <div class="container container--narrow">
+        {hadError && (
+          <div class="form-error" role="alert">
+            Something needs your attention. Please check the highlighted fields and try again.
+          </div>
+        )}
+
+        <form
+          id="registration-form"
+          class="registration-form"
+          method="POST"
+          action={actions.registerProgramme}
+        >
+          <!-- Section 1: Programme Information -->
+          <div class="form-card animate-fade-in-up">
+            <div class="form-card-header">
+              <span class="section-number">01</span>
+              <h2>Programme Information</h2>
+            </div>
+            <div class="form-card-body">
+              <div class="info-box">
+                <h3>About this registration</h3>
+                <p>
+                  This form signs you up to attend the conference <strong>programme</strong>
+                  &mdash; the teaching, prayer, and worship sessions across the four days.
+                </p>
+              </div>
+
+              <div class="notice-box">
+                <h3>Please note: accommodation</h3>
+                <p>
+                  Registration for accommodation has closed and
+                  <strong>accommodation is no longer available</strong> through the conference.
+                  If you are travelling in, you will need to arrange your own place to stay for
+                  the duration of the conference.
+                </p>
+              </div>
+
+              <div class="acknowledgment-box">
+                <label class="form-check">
+                  <input type="checkbox" name="program_acknowledged" required />
+                  <span class="form-check-label">
+                    I confirm that I have read and understood the programme details above.
+                  </span>
+                </label>
+                {fieldErrors.program_acknowledged && (
+                  <p class="field-error">{fieldErrors.program_acknowledged[0]}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Participant Information -->
+          <div class="form-card animate-fade-in-up delay-1">
+            <div class="form-card-header">
+              <span class="section-number">02</span>
+              <h2>Your Details</h2>
+            </div>
+            <div class="form-card-body">
+              <div class="form-group">
+                <label class="form-label" for="full_name">Full Name <span class="required">*</span></label>
+                <input
+                  type="text"
+                  id="full_name"
+                  name="full_name"
+                  class="form-input"
+                  placeholder="Enter your full name"
+                  required
+                />
+                {fieldErrors.full_name && <p class="field-error">{fieldErrors.full_name[0]}</p>}
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="phone">Phone Number <span class="required">*</span></label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    class="form-input"
+                    placeholder="+49 XXX XXXXXXX"
+                    required
+                  />
+                  {fieldErrors.phone && <p class="field-error">{fieldErrors.phone[0]}</p>}
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="email">Email Address <span class="required">*</span></label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="form-input"
+                    placeholder="your@email.com"
+                    required
+                  />
+                  {fieldErrors.email && <p class="field-error">{fieldErrors.email[0]}</p>}
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Gender <span class="required">*</span></label>
+                  <div class="radio-group">
+                    <label class="form-check form-check--inline">
+                      <input type="radio" name="gender" value="female" required />
+                      <span class="form-check-label">Female</span>
+                    </label>
+                    <label class="form-check form-check--inline">
+                      <input type="radio" name="gender" value="male" />
+                      <span class="form-check-label">Male</span>
+                    </label>
+                  </div>
+                  {fieldErrors.gender && <p class="field-error">{fieldErrors.gender[0]}</p>}
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="city">City of Residence</label>
+                  <input
+                    type="text"
+                    id="city"
+                    name="city"
+                    class="form-input"
+                    placeholder="e.g., Berlin"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Consent & Agreements -->
+          <div class="form-card animate-fade-in-up delay-2">
+            <div class="form-card-header">
+              <span class="section-number">03</span>
+              <h2>Consent & Agreements</h2>
+            </div>
+            <div class="form-card-body">
+              <div class="form-group">
+                <label class="form-label">Photo & Video Consent <span class="required">*</span></label>
+                <label class="form-check">
+                  <input type="checkbox" name="photo_consent" required />
+                  <span class="form-check-label">
+                    I give permission for photos and videos to be taken and used for communication purposes.
+                  </span>
+                </label>
+                {fieldErrors.photo_consent && <p class="field-error">{fieldErrors.photo_consent[0]}</p>}
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Participation Consent <span class="required">*</span></label>
+                <label class="form-check">
+                  <input type="checkbox" name="participation_consent" required />
+                  <span class="form-check-label">
+                    I confirm that the information provided is accurate and I give consent to participate in the Boldness and Burdens Conference 2026.
+                  </span>
+                </label>
+                {fieldErrors.participation_consent && (
+                  <p class="field-error">{fieldErrors.participation_consent[0]}</p>
+                )}
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="consent_date">Date <span class="required">*</span></label>
+                <input
+                  type="date"
+                  id="consent_date"
+                  name="consent_date"
+                  class="form-input"
+                  required
+                />
+                {fieldErrors.consent_date && <p class="field-error">{fieldErrors.consent_date[0]}</p>}
+              </div>
+
+              <div class="gdpr-notice">
+                <h4>Data Protection Notice</h4>
+                <p>
+                  All information provided will be treated confidentially and used solely for the purpose of organizing and safely conducting the Boldness and Burdens Conference 2026, in accordance with GDPR regulations.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <div class="form-actions animate-fade-in-up delay-3">
+            <button type="submit" class="btn btn--primary btn--large">
+              <span>Complete Registration</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <p>BBC'26 - Boldness and Burdens Conference</p>
+          <a href="mailto:info@boldnessandburdens.com">info@boldnessandburdens.com</a>
+        </div>
+      </div>
+    </footer>
+  </main>
+</BaseLayout>
+
+<style>
+  /* Page Header */
+  .page-header {
+    padding: var(--space-2xl) 0 var(--space-xl);
+    background: linear-gradient(180deg, var(--color-cream) 0%, var(--color-cream-dark) 100%);
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .page-header {
+      padding: var(--space-3xl) 0 var(--space-2xl);
+    }
+  }
+
+  .back-link {
+    display: inline-block;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-charcoal-light);
+    margin-bottom: var(--space-xl);
+    transition: color var(--duration-normal) var(--ease-out);
+  }
+
+  .back-link:hover {
+    color: var(--color-accent-dark);
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 400;
+    margin-bottom: var(--space-sm);
+  }
+
+  .page-subtitle {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--color-charcoal-light);
+    margin: 0;
+  }
+
+  .page-header .divider {
+    margin: var(--space-xl) auto 0;
+  }
+
+  /* Form Section */
+  .form-section {
+    padding: var(--space-2xl) 0;
+  }
+
+  @media (min-width: 768px) {
+    .form-section {
+      padding: var(--space-3xl) 0;
+    }
+  }
+
+  /* Error summary banner */
+  .form-error {
+    background: color-mix(in srgb, var(--color-error) 10%, var(--color-cream));
+    border: 1px solid var(--color-error);
+    color: var(--color-error);
+    padding: var(--space-md) var(--space-lg);
+    margin-bottom: var(--space-xl);
+    font-size: 0.875rem;
+  }
+
+  .field-error {
+    color: var(--color-error);
+    font-size: 0.8125rem;
+    margin: var(--space-xs) 0 0;
+  }
+
+  .registration-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+  }
+
+  @media (min-width: 768px) {
+    .registration-form {
+      gap: var(--space-2xl);
+    }
+  }
+
+  /* Form Card */
+  .form-card {
+    background: var(--color-cream);
+    border: 1px solid var(--color-cream-dark);
+  }
+
+  .form-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    border-bottom: 1px solid var(--color-cream-dark);
+  }
+
+  @media (min-width: 480px) {
+    .form-card-header {
+      gap: var(--space-md);
+      padding: var(--space-md) var(--space-lg);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .form-card-header {
+      padding: var(--space-lg) var(--space-xl);
+    }
+  }
+
+  .section-number {
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    color: var(--color-accent);
+    font-weight: 500;
+  }
+
+  .form-card-header h2 {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .form-card-body {
+    padding: var(--space-md);
+  }
+
+  @media (min-width: 480px) {
+    .form-card-body {
+      padding: var(--space-lg);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .form-card-body {
+      padding: var(--space-xl);
+    }
+  }
+
+  /* Info Boxes */
+  .info-box {
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--color-cream-dark);
+  }
+
+  .info-box:last-of-type {
+    border-bottom: none;
+    margin-bottom: var(--space-lg);
+    padding-bottom: 0;
+  }
+
+  .info-box h3 {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--space-md);
+    color: var(--color-charcoal);
+  }
+
+  .info-box p {
+    font-size: 0.875rem;
+    color: var(--color-charcoal-light);
+    line-height: 1.7;
+  }
+
+  /* Accommodation notice — amber-tinted callout to draw the eye */
+  .notice-box {
+    background: color-mix(in srgb, var(--color-accent) 12%, var(--color-cream));
+    border-left: 3px solid var(--color-accent);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-lg);
+  }
+
+  .notice-box h3 {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--space-sm);
+    color: var(--color-accent-dark);
+  }
+
+  .notice-box p {
+    font-size: 0.875rem;
+    color: var(--color-charcoal-light);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .acknowledgment-box {
+    background: var(--color-cream-dark);
+    padding: var(--space-lg);
+    margin-top: var(--space-lg);
+  }
+
+  .acknowledgment-box .form-check {
+    margin-bottom: 0;
+  }
+
+  /* Form Rows */
+  .form-row {
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  @media (min-width: 600px) {
+    .form-row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  /* Radio Group */
+  .radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md) var(--space-xl);
+  }
+
+  .form-check--inline {
+    margin-bottom: 0;
+    min-width: 80px;
+  }
+
+  /* GDPR Notice */
+  .gdpr-notice {
+    background: var(--color-cream-dark);
+    padding: var(--space-lg);
+    margin-top: var(--space-lg);
+  }
+
+  .gdpr-notice h4 {
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin: 0 0 var(--space-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .gdpr-notice p {
+    font-size: 0.8125rem;
+    color: var(--color-charcoal-light);
+    margin: 0;
+    line-height: 1.7;
+  }
+
+  /* Form Actions */
+  .form-actions {
+    text-align: center;
+    padding-top: var(--space-lg);
+  }
+
+  .btn--large {
+    width: 100%;
+    padding: var(--space-lg) var(--space-xl);
+    font-size: 0.875rem;
+  }
+
+  @media (min-width: 480px) {
+    .btn--large {
+      width: auto;
+      padding: var(--space-lg) var(--space-2xl);
+      font-size: 0.9375rem;
+    }
+  }
+
+  .btn--large svg {
+    transition: transform var(--duration-normal) var(--ease-out);
+  }
+
+  .btn--large:hover svg {
+    transform: translateX(4px);
+  }
+
+  /* Footer */
+  .footer {
+    background: var(--color-charcoal);
+    color: var(--color-cream);
+    padding: var(--space-xl) 0;
+    margin-top: var(--space-2xl);
+  }
+
+  .footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    text-align: center;
+  }
+
+  @media (min-width: 600px) {
+    .footer-content {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+
+  .footer-content p {
+    font-size: 0.8125rem;
+    color: rgba(250, 248, 245, 0.6);
+    margin: 0;
+  }
+
+  .footer-content a {
+    font-size: 0.8125rem;
+    color: var(--color-cream);
+  }
+
+  .footer-content a:hover {
+    color: var(--color-accent);
+  }
+
+  /* Required field indicator */
+  .required {
+    color: var(--color-accent);
+    font-weight: 500;
+  }
+
+  /* Form validation states */
+  .form-input:invalid:not(:placeholder-shown) {
+    border-color: var(--color-error);
+  }
+
+  .form-input:valid:not(:placeholder-shown) {
+    border-color: var(--color-success);
+  }
+</style>
+
+<script>
+  // Default the consent date to today.
+  const dateInput = document.getElementById('consent_date') as HTMLInputElement;
+
+  if (dateInput && !dateInput.value) {
+    dateInput.value = new Date().toISOString().split('T')[0];
+  }
+
+  // Scroll-in animations.
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        (entry.target as HTMLElement).style.opacity = '1';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('[class*="animate-"]').forEach(el => observer.observe(el));
+</script>
