@@ -4,81 +4,192 @@
     <meta charset="utf-8" />
     <title>Einverständniserklärung — Boldness &amp; Burdens Conference 2026</title>
     <style>
-      body {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 15px;
-        line-height: 1.8;
-        color: #000;
-        max-width: 640px;
-        margin: 40px auto;
-        padding: 0 20px;
+      @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap');
+
+      :root {
+        --ink: #1e1610;
+        --muted: #7a6c5b;
+        --accent: #d4873a;
+        --hair: #e0d6c6;
+        --line: #b7a88f;
       }
 
-      h1 {
-        font-size: 20px;
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: #e7e1d6;
+        color: var(--ink);
+        font-family: 'Outfit', system-ui, sans-serif;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .sheet {
+        position: relative;
+        z-index: 1;
+        max-width: 780px;
+        margin: 28px auto;
+        background: #fff;
+        box-shadow: 0 8px 40px rgba(30, 22, 16, 0.18);
+        overflow: hidden;
+      }
+
+      /* Faint brand watermark: above the paper, behind the text. */
+      .sheet__wm {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      .sheet__wm img {
+        width: 58%;
+        max-width: 440px;
+        opacity: 0.07;
+      }
+
+      .sheet__in {
+        position: relative;
+        z-index: 1;
+        padding: 40px 48px 34px;
+      }
+
+      /* ---- Masthead ---- */
+      .mast { text-align: center; }
+
+      .mast__logo {
+        height: 62px;
+        width: auto;
+      }
+
+      .mast__word {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 33px;
+        line-height: 1;
+        letter-spacing: 0.05em;
+        margin-top: 12px;
+        color: var(--ink);
+      }
+
+      .mast__tag {
+        font-size: 10.5px;
+        font-weight: 500;
+        letter-spacing: 0.34em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-top: 7px;
+      }
+
+      .mast__meta {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 8px;
+      }
+
+      .rule {
+        height: 1px;
+        background: var(--hair);
+        margin: 20px 0 0;
+      }
+
+      /* ---- Document title ---- */
+      .doc {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 30px;
+        line-height: 1.04;
+        letter-spacing: 0.07em;
         text-align: center;
-        margin-bottom: 30px;
+        color: var(--ink);
+        margin: 28px 0 28px;
       }
 
-      p {
-        margin: 0 0 14px;
+      /* ---- Form body (original content) ---- */
+      .body {
+        font-size: 14.5px;
+        line-height: 1.8;
       }
+
+      .body p { margin: 0 0 14px; }
 
       .line {
         display: inline-block;
-        border-bottom: 1px solid #000;
+        border-bottom: 1px solid var(--line);
         min-width: 200px;
+        vertical-align: baseline;
       }
 
-      .full {
-        width: 100%;
-      }
+      .line.full { width: 100%; }
 
       .label {
         font-size: 12px;
-        color: #444;
+        color: var(--muted);
+        margin: 2px 0 20px !important;
       }
 
-      .sign {
-        margin-top: 50px;
-      }
+      .sign { margin-top: 50px; }
 
-      .logo {
-        height: 55px;
-        width: auto;
-        display: block;
-        margin: 0 0 30px auto;
+      @media print {
+        html, body { background: #fff; }
+
+        .sheet {
+          max-width: none;
+          margin: 0;
+          box-shadow: none;
+        }
+
+        .sheet__in { padding: 18mm 18mm 14mm; }
+
+        @page { size: A4; margin: 0; }
       }
     </style>
   </head>
   <body>
-    <img class="logo" src="../logo-black.png" alt="Boldness &amp; Burdens Conference" />
+    <div class="sheet">
+      <div class="sheet__wm" aria-hidden="true"><img src="../logo-black.png" alt="" /></div>
+      <div class="sheet__in">
+        <header class="mast">
+          <img class="mast__logo" src="../logo-colored.png" alt="Boldness &amp; Burdens Conference" />
+          <div class="mast__word">Boldness &amp; Burdens Conference 2026</div>
+          <div class="mast__tag">School of the Spirit</div>
+          <div class="mast__meta">16.&ndash;19. Juli 2026 &middot; VJF Begegnungsstätte, Krimnitzer Weg 25, 12527 Berlin</div>
+        </header>
 
-    <h1>Einverständniserklärung</h1>
+        <div class="rule"></div>
 
-    <p>Ich, <span class="line full"></span></p>
-    <p class="label">(Name des / der Erziehungsberechtigten)</p>
+        <h1 class="doc">Einverständniserklärung</h1>
 
-    <p>erkläre mich damit einverstanden, dass mein Sohn / meine Tochter</p>
+        <div class="body">
+          <p>Ich, <span class="line full"></span></p>
+          <p class="label">(Name des / der Erziehungsberechtigten)</p>
 
-    <p><span class="line full"></span></p>
-    <p class="label">(Name des Kindes)</p>
+          <p>erkläre mich damit einverstanden, dass mein Sohn / meine Tochter</p>
 
-    <p>geb. am <span class="line" style="min-width: 140px"></span> in <span class="line" style="min-width: 220px"></span></p>
+          <p><span class="line full"></span></p>
+          <p class="label">(Name des Kindes)</p>
 
-    <p>
-      an der Boldness &amp; Burdens Conference 2026 (16.&ndash;19. Juli 2026,
-      VJF Begegnungsstätte, Krimnitzer Weg 25, 12527 Berlin) teilnimmt und zu
-      der Veranstaltung und zurück befördert werden darf.
-    </p>
+          <p>geb. am <span class="line" style="min-width: 150px"></span> in <span class="line" style="min-width: 240px"></span></p>
 
-    <p>Im Notfall willige ich in notwendige ärztliche / medizinische Maßnahmen ein.</p>
+          <p>
+            an der Boldness &amp; Burdens Conference 2026 (16.&ndash;19. Juli 2026,
+            VJF Begegnungsstätte, Krimnitzer Weg 25, 12527 Berlin) teilnimmt und zu
+            der Veranstaltung und zurück befördert werden darf.
+          </p>
 
-    <p>Im Notfall erreichbar unter: <span class="line" style="min-width: 260px"></span></p>
+          <p>Im Notfall willige ich in notwendige ärztliche / medizinische Maßnahmen ein.</p>
 
-    <div class="sign">
-      <p><span class="line full"></span></p>
-      <p class="label">Ort, Datum, Unterschrift der / des Erziehungsberechtigten</p>
+          <p>Im Notfall erreichbar unter: <span class="line" style="min-width: 280px"></span></p>
+
+          <div class="sign">
+            <p><span class="line full"></span></p>
+            <p class="label">Ort, Datum, Unterschrift der / des Erziehungsberechtigten</p>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>
