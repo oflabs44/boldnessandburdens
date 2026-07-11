@@ -262,7 +262,7 @@ const defaultHeader = `<div class="email-header">
             <div class="divider"></div>`;
 
 // Templates that lead with their own branded graphic skip the text header.
-const noHeaderTemplates = new Set(["30-day-countdown", "20-day-countdown"]);
+const noHeaderTemplates = new Set(["30-day-countdown", "20-day-countdown", "5-day-countdown"]);
 
 function headerFor(tpl: string): string {
   return noHeaderTemplates.has(tpl) ? "" : defaultHeader;
@@ -276,6 +276,9 @@ const inlineImages: Record<string, { filename: string; path: string; cid: string
   ],
   "20-day-countdown": [
     { filename: "countdown-20.jpg", path: join(ROOT, "public", "countdown-20.jpg"), cid: "countdown20" },
+  ],
+  "5-day-countdown": [
+    { filename: "countdown-5.jpg", path: join(ROOT, "public", "countdown-5.jpg"), cid: "countdown5" },
   ],
 };
 
@@ -295,6 +298,7 @@ const defaultSubjects: Record<string, string> = {
   "venue-change": "Important Update: B&B Conference 2026 Venue Change",
   "30-day-countdown": "30 Days to Go — Boldness & Burdens Conference 2026",
   "20-day-countdown": "20 Days to Go: The Meeting is Near!",
+  "5-day-countdown": "5 Days to Go: Are You Ready?",
   "tshirt-closing-reminder": "BBC 2026 T-Shirt Orders Close Tomorrow!",
   "badge-onboarding": "Your BB26 Digital Pass Is Ready",
   "badge-onboarding-de": "Dein BB26 Digital-Ausweis ist bereit",
