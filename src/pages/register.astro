@@ -2,6 +2,7 @@
 export const prerender = false;
 
 import BaseLayout from '../layouts/BaseLayout.astro';
+import LegalCredit from '../components/LegalCredit.astro';
 import { actions, isInputError } from 'astro:actions';
 
 // PRG: on a successful submit, bounce to the thank-you page.
@@ -19,6 +20,7 @@ const hadError = !!(result && result.error);
   title="Register"
   description="Register for the Boldness and Burdens Conference 2026 programme. July 16-19 in Berlin."
   canonicalPath="/register"
+  hideFooter={true}
 >
   <main>
     <!-- Header -->
@@ -232,6 +234,9 @@ const hadError = !!(result && result.error);
         <div class="footer-content">
           <p>BBC'26 - Boldness and Burdens Conference</p>
           <a href="mailto:info@boldnessandburdens.com">info@boldnessandburdens.com</a>
+        </div>
+        <div class="footer-legal">
+          <LegalCredit variant="dark" />
         </div>
       </div>
     </footer>
@@ -552,6 +557,12 @@ const hadError = !!(result && result.error);
 
   .footer-content a:hover {
     color: var(--color-accent);
+  }
+
+  .footer-legal {
+    margin-top: var(--space-lg);
+    padding-top: var(--space-lg);
+    border-top: 1px solid rgba(250, 248, 245, 0.1);
   }
 
   /* Required field indicator */

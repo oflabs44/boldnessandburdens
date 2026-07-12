@@ -1,5 +1,6 @@
 ---
 import { edition } from "../config/editions/bb26";
+import LegalCredit from "../components/LegalCredit.astro";
 
 interface Props {
   title: string;
@@ -8,6 +9,7 @@ interface Props {
   canonicalPath?: string;
   noindex?: boolean;
   transparentHeader?: boolean;
+  hideFooter?: boolean;
 }
 
 const SITE_URL = "https://boldnessandburdens.com";
@@ -20,7 +22,8 @@ const {
   image = DEFAULT_IMAGE,
   canonicalPath = "",
   noindex = false,
-  transparentHeader = false
+  transparentHeader = false,
+  hideFooter = false
 } = Astro.props;
 
 const canonicalURL = `${SITE_URL}${canonicalPath}`;
@@ -83,6 +86,14 @@ const fullTitle = title.includes(edition.shortName) ? title : `${title} | ${edit
       </header>
     )}
     <slot />
+
+    {!hideFooter && (
+      <footer class="site-legal">
+        <div class="site-legal__inner">
+          <LegalCredit variant="light" />
+        </div>
+      </footer>
+    )}
   </body>
 </html>
 
@@ -119,5 +130,16 @@ const fullTitle = title.includes(edition.shortName) ? title : `${title} | ${edit
     .site-header__logo img {
       height: 44px;
     }
+  }
+
+  .site-legal {
+    background: var(--color-cream-dark);
+    border-top: 1px solid rgba(30, 22, 16, 0.08);
+  }
+
+  .site-legal__inner {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-lg);
   }
 </style>

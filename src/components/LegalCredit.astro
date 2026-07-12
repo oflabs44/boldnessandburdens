@@ -1,0 +1,137 @@
+---
+// Operator credit (B&B runs under GeTu Prospects e.V.) plus the mandatory
+// Impressum/Datenschutz links. Used inside every footer so the attribution
+// and legal links live in one place. `variant` matches the surrounding footer.
+interface Props {
+  variant?: "dark" | "light";
+}
+
+const { variant = "light" } = Astro.props;
+---
+
+<div class:list={["legal-credit", `legal-credit--${variant}`]}>
+  <a
+    class="legal-credit__org"
+    href="https://www.getu-prospects.de"
+    target="_blank"
+    rel="noopener"
+  >
+    <span class="legal-credit__logo">
+      <img src="/getu-logo.png" alt="GeTu Prospects e.V." width="483" height="309" />
+    </span>
+    <span class="legal-credit__text">
+      <span class="legal-credit__eyebrow">Veranstaltet von</span>
+      <span class="legal-credit__name">GeTu Prospects e.V.</span>
+    </span>
+  </a>
+
+  <nav class="legal-credit__links" aria-label="Rechtliches">
+    <a href="/impressum">Impressum</a>
+    <a href="/datenschutz">Datenschutz</a>
+  </nav>
+</div>
+
+<style>
+  .legal-credit {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
+  }
+
+  .legal-credit__org {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-md);
+    text-decoration: none;
+  }
+
+  .legal-credit__logo {
+    display: inline-flex;
+    padding: 6px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(30, 22, 16, 0.12);
+  }
+
+  .legal-credit__logo img {
+    height: 30px;
+    width: auto;
+    display: block;
+  }
+
+  .legal-credit__text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  .legal-credit__eyebrow {
+    font-family: var(--font-body);
+    font-size: 0.625rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  /* Body font (not the all-caps display font) to preserve the official
+     "GeTu Prospects e.V." casing. */
+  .legal-credit__name {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+  }
+
+  .legal-credit__links {
+    display: inline-flex;
+    gap: var(--space-lg);
+  }
+
+  .legal-credit__links a {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    text-decoration: none;
+  }
+
+  /* Light variant — sits on cream backgrounds */
+  .legal-credit--light .legal-credit__eyebrow {
+    color: var(--color-accent-dark);
+  }
+
+  .legal-credit--light .legal-credit__name {
+    color: var(--color-charcoal);
+  }
+
+  .legal-credit--light .legal-credit__links a {
+    color: var(--color-charcoal-light);
+  }
+
+  .legal-credit--light .legal-credit__links a:hover {
+    color: var(--color-accent-dark);
+  }
+
+  /* Dark variant — sits on the charcoal footer */
+  .legal-credit--dark .legal-credit__eyebrow {
+    color: var(--color-accent);
+  }
+
+  .legal-credit--dark .legal-credit__name {
+    color: var(--color-cream);
+  }
+
+  .legal-credit--dark .legal-credit__links a {
+    color: rgba(250, 248, 245, 0.6);
+  }
+
+  .legal-credit--dark .legal-credit__links a:hover {
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 560px) {
+    .legal-credit {
+      justify-content: center;
+      text-align: center;
+    }
+  }
+</style>

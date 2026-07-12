@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import LegalCredit from '../components/LegalCredit.astro';
 
 const eventJsonLd = {
   "@context": "https://schema.org",
@@ -60,6 +61,7 @@ const embers = [
   title="BBC'26 - School of the Spirit | Boldness and Burdens Conference"
   canonicalPath="/"
   transparentHeader={true}
+  hideFooter={true}
 >
   <script type="application/ld+json" set:html={JSON.stringify(eventJsonLd)} />
   <main>
@@ -353,7 +355,8 @@ const embers = [
           </div>
         </div>
         <div class="footer-bottom">
-          <p>2026 Boldness and Burdens Conference</p>
+          <LegalCredit variant="dark" />
+          <p>&copy; 2026 Boldness and Burdens Conference</p>
         </div>
       </div>
     </footer>
@@ -1539,7 +1542,9 @@ const embers = [
 
   .footer-bottom {
     padding-top: var(--space-xl);
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
   }
 
   .footer-bottom p {
