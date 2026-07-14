@@ -32,8 +32,8 @@ const paypal = "https://www.paypal.me/HeyMakhel";
       <div class="give__cols">
         <section class="give__col">
           <h2 class="give__h">PayPal</h2>
-          <img class="give__qr" src="/paypal-qr.svg" alt="QR code that opens PayPal" width="200" height="200" />
-          <a class="give__link" href={paypal} target="_blank" rel="noopener noreferrer">paypal.me/HeyMakhel</a>
+          <a class="give__paypal" href={paypal} target="_blank" rel="noopener noreferrer">Give via PayPal</a>
+          <a class="give__handle" href={paypal} target="_blank" rel="noopener noreferrer">paypal.me/HeyMakhel</a>
         </section>
 
         <section class="give__col">
@@ -163,25 +163,33 @@ const paypal = "https://www.paypal.me/HeyMakhel";
     margin: 0 0 var(--space-lg);
   }
 
-  .give__qr {
-    display: block;
-    width: clamp(170px, 46vw, 200px);
-    height: auto;
-    margin: 0 auto;
+  .give__paypal {
+    display: inline-block;
+    padding: 14px 26px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #1e1610;
+    background: var(--color-accent);
+    border-radius: 999px;
+    transition: background 0.2s var(--ease-out), transform 0.2s var(--ease-out);
   }
 
-  .give__link {
-    display: inline-block;
+  .give__paypal:hover { background: var(--color-accent-light); transform: translateY(-1px); }
+
+  .give__handle {
+    display: block;
     margin-top: var(--space-md);
     font-family: var(--font-body);
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     letter-spacing: 0.04em;
     color: var(--gold-3, #9c7322);
     word-break: break-all;
     transition: color 0.2s var(--ease-out);
   }
 
-  .give__link:hover { color: var(--color-accent-dark); }
+  .give__handle:hover { color: var(--color-accent-dark); }
 
   /* subtle bank card */
   .bankcard {
