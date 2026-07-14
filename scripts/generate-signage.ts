@@ -142,6 +142,7 @@ const built: Built[] = [];
 for (const d of dorms) built.push({ label: d.code, body: await dormSign(d) });
 for (const s of stations) built.push({ label: s, body: await stationSign(s) });
 built.push({ label: "Find Your Badge", body: await scanSign("Find Your Badge", "/bb26/participant") });
+built.push({ label: "Giving", body: await scanSign("Giving", "/bb26/giving") });
 built.push({ label: "Need Help?", body: await helpSign() });
 
 const total = built.length;
