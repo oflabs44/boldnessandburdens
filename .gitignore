@@ -37,3 +37,6 @@ emails/preview*.html
 
 # jetbrains setting folder
 .idea/
+
+# Signage: commercial Champion Gothic font (brand kit) — keep local, do not redistribute
+signage/assets/*.ttf

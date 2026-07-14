@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>BB26 Signage Pack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  @font-face {
+    font-family: 'Champion Gothic';
+    src: url('assets/ChampionGothic-Heavyweight.ttf') format('truetype');
+    font-weight: 800;
+    font-display: swap;
+  }
+
+  :root {
+    --ink: #1e1610;
+    --muted: #4a3f35;
+    --ember: #d4873a;
+    --ember-dark: #a86520;
+    --cream: #faf6f0;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Outfit', system-ui, sans-serif;
+    color: var(--ink);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page { size: A4 portrait; margin: 0; }
+
+  /* --- The sheet: top band / white middle / bottom band ------------------- */
+  .sign {
+    width: 210mm;
+    height: 297mm;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    page-break-after: always;
+  }
+  .sign:last-child { page-break-after: auto; }
+
+  .band { display: block; width: 100%; height: auto; }
+  .band--top { margin-top: -1mm; }      /* bleed the torn art to the edge */
+  .band--bottom { margin-bottom: -1mm; }
+
+  /* --- White middle: the Champion Gothic hero ---------------------------- */
+  .mid {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8mm 14mm;
+    min-height: 0;
+  }
+
+  .code {
+    font-family: 'Champion Gothic', 'Arial Narrow', sans-serif;
+    font-weight: 800;
+    font-size: 86pt;
+    line-height: 0.82;
+    letter-spacing: 0.01em;
+    margin: 0;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .note {
+    font-size: 14pt;
+    color: var(--muted);
+    max-width: 130mm;
+    margin: 12mm auto 0;
+    line-height: 1.5;
+  }
+
+  .title {
+    font-family: 'Champion Gothic', 'Arial Narrow', sans-serif;
+    font-weight: 800;
+    font-size: 52pt;
+    line-height: 0.9;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    margin: 0;
+    color: var(--ink);
+    max-width: 175mm;
+    text-wrap: balance;
+  }
+
+  /* Scan sign — smaller title over a hero QR */
+  .title--scan { font-size: 32pt; margin-bottom: 8mm; }
+  .heroqr { line-height: 0; }
+  .heroqr__tile {
+    display: inline-block;
+    background: #fff;
+    padding: 5mm;
+    border-radius: 3mm;
+  }
+  .heroqr__tile svg { display: block; width: 58mm; height: 58mm; }
+
+  .contact { display: flex; flex-direction: column; gap: 1mm; margin: 10mm 0 0; }
+  .contact__name { font-family: 'Champion Gothic', sans-serif; font-weight: 800; font-size: 34pt; letter-spacing: 0.02em; text-transform: uppercase; }
+  .contact__phone { font-size: 22pt; font-weight: 700; }
+  .contact__wa { font-size: 11pt; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ember-dark); }
+
+  /* --- Bottom band overlays: QR + GeTu sponsor --------------------------- */
+  .bottom { position: relative; }
+
+  .qr {
+    position: absolute;
+    right: 5%;
+    bottom: 9%;
+    width: 19%;
+  }
+  .qr__tile { background: #fff; padding: 3mm; border-radius: 2mm; line-height: 0; }
+  .qr__tile svg { display: block; width: 100%; height: auto; }
+
+  .sponsor {
+    position: absolute;
+    left: 6%;
+    bottom: 11%;
+    display: flex;
+    align-items: center;
+    gap: 2.5mm;
+    max-width: 42%;
+  }
+  .sponsor__logo {
+    height: 11mm;
+    width: auto;
+    display: block;
+    background: #fff;
+    padding: 1mm;
+    border-radius: 1.5mm;
+  }
+  .sponsor__txt {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 10.5pt;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    color: var(--cream);
+  }
+  .sponsor__lead {
+    font-weight: 600;
+    font-size: 7pt;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ember);
+    margin-bottom: 1.2mm;
+  }
+
+  /* --- Screen preview: make page boundaries obvious ---------------------- */
+  @media screen {
+    body { background: #2a2622; padding: 46px 0 20px; }
+    .sign { margin: 0 auto 46px; position: relative; box-shadow: 0 12px 44px rgba(0,0,0,0.45); }
+    .sign::before {
+      content: attr(data-label);
+      position: absolute;
+      top: -26px; left: 2px;
+      font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+      color: #c9b492;
+    }
+  }
+  @media print {
+    body { background: none; }
+    .sign { margin: 0; box-shadow: none; }
+    .sign::before { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ====================== PAGE 1 / 12 · DORM-01 ====================== -->
+<section class="sign" data-label="Page 1 / 12 · DORM-01">
+    <img class="band band--top" src="assets/band-top.png" alt="Boldness &amp; Burdens Conference 2026" />
+    <div class="mid">
+      <h1 class="code">DORM-01</h1>
+      
+    </div>
+    
+    <div class="bottom">
+      <img class="band band--bottom" src="assets/band-bottom.png" alt="" />
+      
+      <div class="sponsor">
+        <img class="sponsor__logo" src="assets/getu-logo.png" alt="GeTu Prospects e.V." />
+        <span class="sponsor__txt"><span class="sponsor__lead">Sponsored by</span>GeTu Prospects e.V.</span>
+      </div>
+      <div class="qr">
+        <div class="qr__tile"><svg xmlns="http://www.w3.org/2000/svg" width="460" height="460" viewBox="0 0 33 33" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h33v33H0z"/><path stroke="#1e1610" d="M2 2.5h7m2 0h3m3 0h2m1 0h3m1 0h7M2 3.5h1m5 0h1m5 0h1m9 0h1m5 0h1M2 4.5h1m1 0h3m1 0h1m1 0h2m1 0h1m2 0h1m1 0h1m1 0h2m2 0h1m1 0h3m1 0h1M2 5.5h1m1 0h3m1 0h1m1 0h1m8 0h1m2 0h1m1 0h1m1 0h3m1 0h1M2 6.5h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h3m2 0h3m1 0h1m1 0h3m1 0h1M2 7.5h1m5 0h1m1 0h1m1 0h6m4 0h1m1 0h1m5 0h1M2 8.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M10 9.5h3m1 0h2m2 0h1m3 0h1M2 10.5h1m1 0h5m2 0h1m1 0h2m1 0h4m2 0h1m1 0h5M2 11.5h1m1 0h3m3 0h2m1 0h1m5 0h8m3 0h1M2 12.5h1m2 0h1m2 0h1m1 0h2m5 0h1m1 0h1m4 0h1m1 0h1M3 13.5h1m5 0h1m2 0h1m3 0h1m3 0h2m1 0h5m1 0h1M2 14.5h3m2 0h2m2 0h1m1 0h2m2 0h3m7 0h2M2 15.5h1m1 0h2m3 0h2m1 0h5m4 0h6m3 0h1M2 16.5h1m2 0h4m2 0h1m2 0h4m1 0h2m5 0h3M2 17.5h3m1 0h1m2 0h2m2 0h1m1 0h1m6 0h1m2 0h1m3 0h1M2 18.5h2m2 0h3m1 0h1m2 0h2m1 0h2m1 0h2m6 0h2M2 19.5h1m1 0h1m2 0h1m3 0h2m1 0h1m3 0h5m1 0h3m1 0h1m1 0h1M2 20.5h1m1 0h2m2 0h2m1 0h1m2 0h1m2 0h1m1 0h1m3 0h1m1 0h1m2 0h1M2 21.5h1m1 0h3m2 0h5m2 0h1m3 0h3m1 0h2m3 0h1M2 22.5h1m1 0h2m2 0h2m1 0h1m5 0h1m1 0h1m1 0h6m1 0h3M10 23.5h1m4 0h2m1 0h1m1 0h1m1 0h1m3 0h5M2 24.5h7m2 0h1m1 0h1m1 0h8m1 0h1m1 0h3M2 25.5h1m5 0h1m1 0h1m4 0h1m2 0h1m2 0h2m3 0h1m3 0h1M2 26.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m2 0h1m2 0h5m1 0h2M2 27.5h1m1 0h3m1 0h1m1 0h1m3 0h2m3 0h3m5 0h4M2 28.5h1m1 0h3m1 0h1m1 0h1m6 0h3m4 0h6M2 29.5h1m5 0h1m3 0h7m3 0h2m3 0h1m1 0h1M2 30.5h7m1 0h1m1 0h2m2 0h1m2 0h1m1 0h1m2 0h1m1 0h1m1 0h1"/></svg>
+</div>
+      </div>
+    </div>
+</section>
+
+<!-- ====================== PAGE 2 / 12 · DORM-02 ====================== -->
+<section class="sign" data-label="Page 2 / 12 · DORM-02">
+    <img class="band band--top" src="assets/band-top.png" alt="Boldness &amp; Burdens Conference 2026" />
+    <div class="mid">
+      <h1 class="code">DORM-02</h1>
+      
+    </div>
+    
+    <div class="bottom">
+      <img class="band band--bottom" src="assets/band-bottom.png" alt="" />
+      
+      <div class="sponsor">
+        <img class="sponsor__logo" src="assets/getu-logo.png" alt="GeTu Prospects e.V." />
+        <span class="sponsor__txt"><span class="sponsor__lead">Sponsored by</span>GeTu Prospects e.V.</span>
+      </div>
+      <div class="qr">
+        <div class="qr__tile"><svg xmlns="http://www.w3.org/2000/svg" width="460" height="460" viewBox="0 0 33 33" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h33v33H0z"/><path stroke="#1e1610" d="M2 2.5h7m2 0h3m3 0h2m1 0h3m1 0h7M2 3.5h1m5 0h1m5 0h1m9 0h1m5 0h1M2 4.5h1m1 0h3m1 0h1m1 0h2m1 0h1m2 0h1m1 0h1m1 0h2m2 0h1m1 0h3m1 0h1M2 5.5h1m1 0h3m1 0h1m1 0h1m8 0h1m2 0h1m1 0h1m1 0h3m1 0h1M2 6.5h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h3m2 0h3m1 0h1m1 0h3m1 0h1M2 7.5h1m5 0h1m1 0h1m1 0h6m4 0h1m1 0h1m5 0h1M2 8.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M10 9.5h3m1 0h2m2 0h1m3 0h1M2 10.5h1m1 0h5m2 0h1m1 0h2m1 0h4m2 0h1m1 0h5M2 11.5h1m1 0h3m3 0h2m1 0h1m5 0h8m3 0h1M2 12.5h1m2 0h1m2 0h1m1 0h2m5 0h1m1 0h1m4 0h1m1 0h1M3 13.5h1m5 0h1m2 0h1m3 0h1m3 0h2m1 0h5m1 0h1M2 14.5h3m2 0h2m2 0h1m1 0h2m2 0h3m7 0h2M2 15.5h1m1 0h2m3 0h2m1 0h5m4 0h6m3 0h1M2 16.5h1m2 0h4m2 0h1m2 0h4m1 0h2m5 0h3M2 17.5h3m1 0h1m2 0h2m2 0h1m1 0h1m6 0h1m2 0h1m3 0h1M2 18.5h2m2 0h3m1 0h1m2 0h2m1 0h2m1 0h2m6 0h2M2 19.5h1m1 0h1m2 0h1m3 0h2m1 0h1m3 0h5m1 0h3m1 0h1m1 0h1M2 20.5h1m1 0h2m2 0h2m1 0h1m2 0h1m2 0h1m1 0h1m3 0h1m1 0h1m2 0h1M2 21.5h1m1 0h3m2 0h5m2 0h1m3 0h3m1 0h2m3 0h1M2 22.5h1m1 0h2m2 0h2m1 0h1m5 0h1m1 0h1m1 0h6m1 0h3M10 23.5h1m4 0h2m1 0h1m1 0h1m1 0h1m3 0h5M2 24.5h7m2 0h1m1 0h1m1 0h8m1 0h1m1 0h3M2 25.5h1m5 0h1m1 0h1m4 0h1m2 0h1m2 0h2m3 0h1m3 0h1M2 26.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m2 0h1m2 0h5m1 0h2M2 27.5h1m1 0h3m1 0h1m1 0h1m3 0h2m3 0h3m5 0h4M2 28.5h1m1 0h3m1 0h1m1 0h1m6 0h3m4 0h6M2 29.5h1m5 0h1m3 0h7m3 0h2m3 0h1m1 0h1M2 30.5h7m1 0h1m1 0h2m2 0h1m2 0h1m1 0h1m2 0h1m1 0h1m1 0h1"/></svg>
+</div>
+      </div>
+    </div>
+</section>
+
+<!-- ====================== PAGE 3 / 12 · DORM-03 ====================== -->
+<section class="sign" data-label="Page 3 / 12 · DORM-03">
+    <img class="band band--top" src="assets/band-top.png" alt="Boldness &amp; Burdens Conference 2026" />
+    <div class="mid">
+      <h1 class="code">DORM-03</h1>
+      
+    </div>
+    
+    <div class="bottom">
+      <img class="band band--bottom" src="assets/band-bottom.png" alt="" />
+      
+      <div class="sponsor">
+        <img class="sponsor__logo" src="assets/getu-logo.png" alt="GeTu Prospects e.V." />
+        <span class="sponsor__txt"><span class="sponsor__lead">Sponsored by</span>GeTu Prospects e.V.</span>
+      </div>
+      <div class="qr">
+        <div class="qr__tile"><svg xmlns="http://www.w3.org/2000/svg" width="460" height="460" viewBox="0 0 33 33" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h33v33H0z"/><path stroke="#1e1610" d="M2 2.5h7m2 0h3m3 0h2m1 0h3m1 0h7M2 3.5h1m5 0h1m5 0h1m9 0h1m5 0h1M2 4.5h1m1 0h3m1 0h1m1 0h2m1 0h1m2 0h1m1 0h1m1 0h2m2 0h1m1 0h3m1 0h1M2 5.5h1m1 0h3m1 0h1m1 0h1m8 0h1m2 0h1m1 0h1m1 0h3m1 0h1M2 6.5h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h3m2 0h3m1 0h1m1 0h3m1 0h1M2 7.5h1m5 0h1m1 0h1m1 0h6m4 0h1m1 0h1m5 0h1M2 8.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M10 9.5h3m1 0h2m2 0h1m3 0h1M2 10.5h1m1 0h5m2 0h1m1 0h2m1 0h4m2 0h1m1 0h5M2 11.5h1m1 0h3m3 0h2m1 0h1m5 0h8m3 0h1M2 12.5h1m2 0h1m2 0h1m1 0h2m5 0h1m1 0h1m4 0h1m1 0h1M3 13.5h1m5 0h1m2 0h1m3 0h1m3 0h2m1 0h5m1 0h1M2 14.5h3m2 0h2m2 0h1m1 0h2m2 0h3m7 0h2M2 15.5h1m1 0h2m3 0h2m1 0h5m4 0h6m3 0h1M2 16.5h1m2 0h4m2 0h1m2 0h4m1 0h2m5 0h3M2 17.5h3m1 0h1m2 0h2m2 0h1m1 0h1m6 0h1m2 0h1m3 0h1M2 18.5h2m2 0h3m1 0h1m2 0h2m1 0h2m1 0h2m6 0h2M2 19.5h1m1 0h1m2 0h1m3 0h2m1 0h1m3 0h5m1 0h3m1 0h1m1 0h1M2 20.5h1m1 0h2m2 0h2m1 0h1m2 0h1m2 0h1m1 0h1m3 0h1m1 0h1m2 0h1M2 21.5h1m1 0h3m2 0h5m2 0h1m3 0h3m1 0h2m3 0h1M2 22.5h1m1 0h2m2 0h2m1 0h1m5 0h1m1 0h1m1 0h6m1 0h3M10 23.5h1m4 0h2m1 0h1m1 0h1m1 0h1m3 0h5M2 24.5h7m2 0h1m1 0h1m1 0h8m1 0h1m1 0h3M2 25.5h1m5 0h1m1 0h1m4 0h1m2 0h1m2 0h2m3 0h1m3 0h1M2 26.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m2 0h1m2 0h5m1 0h2M2 27.5h1m1 0h3m1 0h1m1 0h1m3 0h2m3 0h3m5 0h4M2 28.5h1m1 0h3m1 0h1m1 0h1m6 0h3m4 0h6M2 29.5h1m5 0h1m3 0h7m3 0h2m3 0h1m1 0h1M2 30.5h7m1 0h1m1 0h2m2 0h1m2 0h1m1 0h1m2 0h1m1 0h1m1 0h1"/></svg>
+</div>
+      </div>
+    </div>
+</section>
+
+<!-- ====================== PAGE 4 / 12 · DORM-04 ====================== -->
+<section class="sign" data-label="Page 4 / 12 · DORM-04">
+    <img class="band band--top" src="assets/band-top.png" alt="Boldness &amp; Burdens Conference 2026" />
+    <div class="mid">
+      <h1 class="code">DORM-04</h1>
+      
+    </div>
+    
+    <div class="bottom">
+      <img class="band band--bottom" src="assets/band-bottom.png" alt="" />
+      
+      <div class="sponsor">
+        <img class="sponsor__logo" src="assets/getu-logo.png" alt="GeTu Prospects e.V." />
+        <span class="sponsor__txt"><span class="sponsor__lead">Sponsored by</span>GeTu Prospects e.V.</span>
+      </div>
+      <div class="qr">
+        <div class="qr__tile"><svg xmlns="http://www.w3.org/2000/svg" width="460" height="460" viewBox="0 0 33 33" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h33v33H0z"/><path stroke="#1e1610" d="M2 2.5h7m2 0h3m3 0h2m1 0h3m1 0h7M2 3.5h1m5 0h1m5 0h1m9 0h1m5 0h1M2 4.5h1m1 0h3m1 0h1m1 0h2m1 0h1m2 0h1m1 0h1m1 0h2m2 0h1m1 0h3m1 0h1M2 5.5h1m1 0h3m1 0h1m1 0h1m8 0h1m2 0h1m1 0h1m1 0h3m1 0h1M2 6.5h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h3m2 0h3m1 0h1m1 0h3m1 0h1M2 7.5h1m5 0h1m1 0h1m1 0h6m4 0h1m1 0h1m5 0h1M2 8.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M10 9.5h3m1 0h2m2 0h1m3 0h1M2 10.5h1m1 0h5m2 0h1m1 0h2m1 0h4m2 0h1m1 0h5M2 11.5h1m1 0h3m3 0h2m1 0h1m5 0h8m3 0h1M2 12.5h1m2 0h1m2 0h1m1 0h2m5 0h1m1 0h1m4 0h1m1 0h1M3 13.5h1m5 0h1m2 0h1m3 0h1m3 0h2m1 0h5m1 0h1M2 14.5h3m2 0h2m2 0h1m1 0h2m2 0h3m7 0h2M2 15.5h1m1 0h2m3 0h2m1 0h5m4 0h6m3 0h1M2 16.5h1m2 0h4m2 0h1m2 0h4m1 0h2m5 0h3M2 17.5h3m1 0h1m2 0h2m2 0h1m1 0h1m6 0h1m2 0h1m3 0h1M2 18.5h2m2 0h3m1 0h1m2 0h2m1 0h2m1 0h2m6 0h2M2 19.5h1m1 0h1m2 0h1m3 0h2m1 0h1m3 0h5m1 0h3m1 0h1m1 0h1M2 20.5h1m1 0h2m2 0h2m1 0h1m2 0h1m2 0h1m1 0h1m3 0h1m1 0h1m2 0h1M2 21.5h1m1 0h3m2 0h5m2 0h1m3 0h3m1 0h2m3 0h1M2 22.5h1m1 0h2m2 0h2m1 0h1m5 0h1m1 0h1m1 0h6m1 0h3M10 23.5h1m4 0h2m1 0h1m1 0h1m1 0h1m3 0h5M2 24.5h7m2 0h1m1 0h1m1 0h8m1 0h1m1 0h3M2 25.5h1m5 0h1m1 0h1m4 0h1m2 0h1m2 0h2m3 0h1m3 0h1M2 26.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m2 0h1m2 0h5m1 0h2M2 27.5h1m1 0h3m1 0h1m1 0h1m3 0h2m3 0h3m5 0h4M2 28.5h1m1 0h3m1 0h1m1 0h1m6 0h3m4 0h6M2 29.5h1m5 0h1m3 0h7m3 0h2m3 0h1m1 0h1M2 30.5h7m1 0h1m1 0h2m2 0h1m2 0h1m1 0h1m2 0h1m1 0h1m1 0h1"/></svg>
+</div>
+      </div>
+    </div>
+</section>
+
+<!-- ====================== PAGE 5 / 12 · DORM-05 ====================== -->
+<section class="sign" data-label="Page 5 / 12 · DORM-05">
+    <img class="band band--top" src="assets/band-top.png" alt="Boldness &amp; Burdens Conference 2026" />
+    <div class="mid">
+      <h1 class="code">DORM-05</h1>
+      
+    </div>
+    
+    <div class="bottom">
+      <img class="band band--bottom" src="assets/band-bottom.png" alt="" />
+      
+      <div class="sponsor">
+        <img class="sponsor__logo" src="assets/getu-logo.png" alt="GeTu Prospects e.V." />
+        <span class="sponsor__txt"><span class="sponsor__lead">Sponsored by</span>GeTu Prospects e.V.</span>
+      </div>
+      <div class="qr">
+        <div class="qr__tile"><svg xmlns="http://www.w3.org/2000/svg" width="460" height="460" viewBox="0 0 33 33" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h33v33H0z"/><path stroke="#1e1610" d="M2 2.5h7m2 0h3m3 0h2m1 0h3m1 0h7M2 3.5h1m5 0h1m5 0h1m9 0h1m5 0h1M2 4.5h1m1 0h3m1 0h1m1 0h2m1 0h1m2 0h1m1 0h1m1 0h2m2 0h1m1 0h3m1 0h1M2 5.5h1m1 0h3m1 0h1m1 0h1m8 0h1m2 0h1m1 0h1m1 0h3m1 0h1M2 6.5h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h3m2 0h3m1 0h1m1 0h3m1 0h1M2 7.5h1m5 0h1m1 0h1m1 0h6m4 0h1m1 0h1m5 0h1M2 8.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M10 9.5h3m1 0h2m2 0h1m3 0h1M2 10.5h1m1 0h5m2 0h1m1 0h2m1 0h4m2 0h1m1 0h5M2 11.5h1m1 0h3m3 0h2m1 0h1m5 0h8m3 0h1M2 12.5h1m2 0h1m2 0h1m1 0h2m5 0h1m1 0h1m4 0h1m1 0h1M3 13.5h1m5 0h1m2 0h1m3 0h1m3 0h2m1 0h5m1 0h1M2 14.5h3m2 0h2m2 0h1m1 0h2m2 0h3m7 0h2M2 15.5h1m1 0h2m3 0h2m1 0h5m4 0h6m3 0h1M2 16.5h1m2 0h4m2 0h1m2 0h4m1 0h2m5 0h3M2 17.5h3m1 0h1m2 0h2m2 0h1m1 0h1m6 0h1m2 0h1m3 0h1M2 18.5h2m2 0h3m1 0h1m2 0h2m1 0h2m1 0h2m6 0h2M2 19.5h1m1 0h1m2 0h1m3 0h2m1 0h1m3 0h5m1 0h3m1 0h1m1 0h1M2 20.5h1m1 0h2m2 0h2m1 0h1m2 0h1m2 0h1m1 0h1m3 0h1m1 0h1m2 0h1M2 21.5h1m1 0h3m2 0h5m2 0h1m3 0h3m1 0h2m3 0h1M2 22.5h1m1 0h2m2 0h2m1 0h1m5 0h1m1 0h1m1 0h6m1 0h3M10 23.5h1m4 0h2m1 0h1m1 0h1m1 0h1m3 0h5M2 24.5h7m2 0h1m1 0h1m1 0h8m1 0h1m1 0h3M2 25.5h1m5 0h1m1 0h1m4 0h1m2 0h1m2 0h2m3 0h1m3 0h1M2 26.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m2 0h1m2 0h5m1 0h2M2 27.5h1m1 0h3m1 0h1m1 0h1m3 0h2m3 0h3m5 0h4M2 28.5h1m1 0h3m1 0h1m1 0h1m6 0h3m4 0h6M2 29.5h1m5 0h1m3 0h7m3 0h2m3 0h1m1 0h1M2 30.5h7m1 0h1m1 0h2m2 0h1m2 0h1m1 0h1m2 0h1m1 0h1m1 0h1"/></svg>
+</div>
+      </div>
+    </div>
+</section>
+
+<!-- ====================== PAGE 6 / 12 · DORM-06 ====================== -->
+<section class="sign" data-label="Page 6 / 12 · DORM-06">
+    <img class="band band--top" src="assets/band-top.png" alt="Boldness &amp; Burdens Conference 2026" />
+    <div class="mid">
+      <h1 class="code">DORM-06</h1>
+      
+    </div>
+    
+    <div class="bottom">
+      <img class="band band--bottom" src="assets/band-bottom.png" alt="" />
+      
+      <div class="sponsor">
+        <img class="sponsor__logo" src="assets/getu-logo.png" alt="GeTu Prospects e.V." />
+        <span class="sponsor__txt"><span class="sponsor__lead">Sponsored by</span>GeTu Prospects e.V.</span>
+      </div>
+      <div class="qr">
+        <div class="qr__tile"><svg xmlns="http://www.w3.org/2000/svg" width="460" height="460" viewBox="0 0 33 33" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h33v33H0z"/><path stroke="#1e1610" d="M2 2.5h7m2 0h3m3 0h2m1 0h3m1 0h7M2 3.5h1m5 0h1m5 0h1m9 0h1m5 0h1M2 4.5h1m1 0h3m1 0h1m1 0h2m1 0h1m2 0h1m1 0h1m1 0h2m2 0h1m1 0h3m1 0h1M2 5.5h1m1 0h3m1 0h1m1 0h1m8 0h1m2 0h1m1 0h1m1 0h3m1 0h1M2 6.5h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h3m2 0h3m1 0h1m1 0h3m1 0h1M2 7.5h1m5 0h1m1 0h1m1 0h6m4 0h1m1 0h1m5 0h1M2 8.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M10 9.5h3m1 0h2m2 0h1m3 0h1M2 10.5h1m1 0h5m2 0h1m1 0h2m1 0h4m2 0h1m1 0h5M2 11.5h1m1 0h3m3 0h2m1 0h1m5 0h8m3 0h1M2 12.5h1m2 0h1m2 0h1m1 0h2m5 0h1m1 0h1m4 0h1m1 0h1M3 13.5h1m5 0h1m2 0h1m3 0h1m3 0h2m1 0h5m1 0h1M2 14.5h3m2 0h2m2 0h1m1 0h2m2 0h3m7 0h2M2 15.5h1m1 0h2m3 0h2m1 0h5m4 0h6m3 0h1M2 16.5h1m2 0h4m2 0h1m2 0h4m1 0h2m5 0h3M2 17.5h3m1 0h1m2 0h2m2 0h1m1 0h1m6 0h1m2 0h1m3 0h1M2 18.5h2m2 0h3m1 0h1m2 0h2m1 0h2m1 0h2m6 0h2M2 19.5h1m1 0h1m2 0h1m3 0h2m1 0h1m3 0h5m1 0h3m1 0h1m1 0h1M2 20.5h1m1 0h2m2 0h2m1 0h1m2 0h1m2 0h1m1 0h1m3 0h1m1 0h1m2 0h1M2 21.5h1m1 0h3m2 0h5m2 0h1m3 0h3m1 0h2m3 0h1M2 22.5h1m1 0h2m2 0h2m1 0h1m5 0h1m1 0h1m1 0h6m1 0h3M10 23.5h1m4 0h2m1 0h1m1 0h1m1 0h1m3 0h5M2 24.5h7m2 0h1m1 0h1m1 0h8m1 0h1m1 0h3M2 25.5h1m5 0h1m1 0h1m4 0h1m2 0h1m2 0h2m3 0h1m3 0h1M2 26.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m2 0h1m2 0h5m1 0h2M2 27.5h1m1 0h3m1 0h1m1 0h1m3 0h2m3 0h3m5 0h4M2 28.5h1m1 0h3m1 0h1m1 0h1m6 0h3m4 0h6M2 29.5h1m5 0h1m3 0h7m3 0h2m3 0h1m1 0h1M2 30.5h7m1 0h1m1 0h2m2 0h1m2 0h1m1 0h1m2 0h1m1 0h1m1 0h1"/></svg>
+</div>
+      </div>
+    </div>
+</section>
+
+<!-- ====================== PAGE 7 / 12 · FZH-001 ====================== -->
+<section class="sign" data-label="Page 7 / 12 · FZH-001">
+    <img class="band band--top" src="assets/band-top.png" alt="Boldness &amp; Burdens Conference 2026" />
+    <div class="mid">
+      <h1 class="code">FZH-001</h1>
+      
+    </div>
+    
+    <div class="bottom">
+      <img class="band band--bottom" src="assets/band-bottom.png" alt="" />
+      
+      <div class="sponsor">
+        <img class="sponsor__logo" src="assets/getu-logo.png" alt="GeTu Prospects e.V." />
+        <span class="sponsor__txt"><span class="sponsor__lead">Sponsored by</span>GeTu Prospects e.V.</span>
+      </div>
+      <div class="qr">
+        <div class="qr__tile"><svg xmlns="http://www.w3.org/2000/svg" width="460" height="460" viewBox="0 0 33 33" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h33v33H0z"/><path stroke="#1e1610" d="M2 2.5h7m2 0h3m3 0h2m1 0h3m1 0h7M2 3.5h1m5 0h1m5 0h1m9 0h1m5 0h1M2 4.5h1m1 0h3m1 0h1m1 0h2m1 0h1m2 0h1m1 0h1m1 0h2m2 0h1m1 0h3m1 0h1M2 5.5h1m1 0h3m1 0h1m1 0h1m8 0h1m2 0h1m1 0h1m1 0h3m1 0h1M2 6.5h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h3m2 0h3m1 0h1m1 0h3m1 0h1M2 7.5h1m5 0h1m1 0h1m1 0h6m4 0h1m1 0h1m5 0h1M2 8.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M10 9.5h3m1 0h2m2 0h1m3 0h1M2 10.5h1m1 0h5m2 0h1m1 0h2m1 0h4m2 0h1m1 0h5M2 11.5h1m1 0h3m3 0h2m1 0h1m5 0h8m3 0h1M2 12.5h1m2 0h1m2 0h1m1 0h2m5 0h1m1 0h1m4 0h1m1 0h1M3 13.5h1m5 0h1m2 0h1m3 0h1m3 0h2m1 0h5m1 0h1M2 14.5h3m2 0h2m2 0h1m1 0h2m2 0h3m7 0h2M2 15.5h1m1 0h2m3 0h2m1 0h5m4 0h6m3 0h1M2 16.5h1m2 0h4m2 0h1m2 0h4m1 0h2m5 0h3M2 17.5h3m1 0h1m2 0h2m2 0h1m1 0h1m6 0h1m2 0h1m3 0h1M2 18.5h2m2 0h3m1 0h1m2 0h2m1 0h2m1 0h2m6 0h2M2 19.5h1m1 0h1m2 0h1m3 0h2m1 0h1m3 0h5m1 0h3m1 0h1m1 0h1M2 20.5h1m1 0h2m2 0h2m1 0h1m2 0h1m2 0h1m1 0h1m3 0h1m1 0h1m2 0h1M2 21.5h1m1 0h3m2 0h5m2 0h1m3 0h3m1 0h2m3 0h1M2 22.5h1m1 0h2m2 0h2m1 0h1m5 0h1m1 0h1m1 0h6m1 0h3M10 23.5h1m4 0h2m1 0h1m1 0h1m1 0h1m3 0h5M2 24.5h7m2 0h1m1 0h1m1 0h8m1 0h1m1 0h3M2 25.5h1m5 0h1m1 0h1m4 0h1m2 0h1m2 0h2m3 0h1m3 0h1M2 26.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m2 0h1m2 0h5m1 0h2M2 27.5h1m1 0h3m1 0h1m1 0h1m3 0h2m3 0h3m5 0h4M2 28.5h1m1 0h3m1 0h1m1 0h1m6 0h3m4 0h6M2 29.5h1m5 0h1m3 0h7m3 0h2m3 0h1m1 0h1M2 30.5h7m1 0h1m1 0h2m2 0h1m2 0h1m1 0h1m2 0h1m1 0h1m1 0h1"/></svg>
+</div>
+      </div>
+    </div>
+</section>
+
+<!-- ====================== PAGE 8 / 12 · Registration ====================== -->
+<section class="sign" data-label="Page 8 / 12 · Registration">
+    <img class="band band--top" src="assets/band-top.png" alt="Boldness &amp; Burdens Conference 2026" />
+    <div class="mid">
+      <h1 class="title">Registration</h1>
+    </div>
+    
+    <div class="bottom">
+      <img class="band band--bottom" src="assets/band-bottom.png" alt="" />
+      
+      <div class="sponsor">
+        <img class="sponsor__logo" src="assets/getu-logo.png" alt="GeTu Prospects e.V." />
+        <span class="sponsor__txt"><span class="sponsor__lead">Sponsored by</span>GeTu Prospects e.V.</span>
+      </div>
+      <div class="qr">
+        <div class="qr__tile"><svg xmlns="http://www.w3.org/2000/svg" width="460" height="460" viewBox="0 0 33 33" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h33v33H0z"/><path stroke="#1e1610" d="M2 2.5h7m2 0h3m3 0h2m1 0h3m1 0h7M2 3.5h1m5 0h1m5 0h1m9 0h1m5 0h1M2 4.5h1m1 0h3m1 0h1m1 0h2m1 0h1m2 0h1m1 0h1m1 0h2m2 0h1m1 0h3m1 0h1M2 5.5h1m1 0h3m1 0h1m1 0h1m8 0h1m2 0h1m1 0h1m1 0h3m1 0h1M2 6.5h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h3m2 0h3m1 0h1m1 0h3m1 0h1M2 7.5h1m5 0h1m1 0h1m1 0h6m4 0h1m1 0h1m5 0h1M2 8.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M10 9.5h3m1 0h2m2 0h1m3 0h1M2 10.5h1m1 0h5m2 0h1m1 0h2m1 0h4m2 0h1m1 0h5M2 11.5h1m1 0h3m3 0h2m1 0h1m5 0h8m3 0h1M2 12.5h1m2 0h1m2 0h1m1 0h2m5 0h1m1 0h1m4 0h1m1 0h1M3 13.5h1m5 0h1m2 0h1m3 0h1m3 0h2m1 0h5m1 0h1M2 14.5h3m2 0h2m2 0h1m1 0h2m2 0h3m7 0h2M2 15.5h1m1 0h2m3 0h2m1 0h5m4 0h6m3 0h1M2 16.5h1m2 0h4m2 0h1m2 0h4m1 0h2m5 0h3M2 17.5h3m1 0h1m2 0h2m2 0h1m1 0h1m6 0h1m2 0h1m3 0h1M2 18.5h2m2 0h3m1 0h1m2 0h2m1 0h2m1 0h2m6 0h2M2 19.5h1m1 0h1m2 0h1m3 0h2m1 0h1m3 0h5m1 0h3m1 0h1m1 0h1M2 20.5h1m1 0h2m2 0h2m1 0h1m2 0h1m2 0h1m1 0h1m3 0h1m1 0h1m2 0h1M2 21.5h1m1 0h3m2 0h5m2 0h1m3 0h3m1 0h2m3 0h1M2 22.5h1m1 0h2m2 0h2m1 0h1m5 0h1m1 0h1m1 0h6m1 0h3M10 23.5h1m4 0h2m1 0h1m1 0h1m1 0h1m3 0h5M2 24.5h7m2 0h1m1 0h1m1 0h8m1 0h1m1 0h3M2 25.5h1m5 0h1m1 0h1m4 0h1m2 0h1m2 0h2m3 0h1m3 0h1M2 26.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m2 0h1m2 0h5m1 0h2M2 27.5h1m1 0h3m1 0h1m1 0h1m3 0h2m3 0h3m5 0h4M2 28.5h1m1 0h3m1 0h1m1 0h1m6 0h3m4 0h6M2 29.5h1m5 0h1m3 0h7m3 0h2m3 0h1m1 0h1M2 30.5h7m1 0h1m1 0h2m2 0h1m2 0h1m1 0h1m2 0h1m1 0h1m1 0h1"/></svg>
+</div>
+      </div>
+    </div>
+</section>
+
+<!-- ====================== PAGE 9 / 12 · Main Hall ====================== -->
+<section class="sign" data-label="Page 9 / 12 · Main Hall">
+    <img class="band band--top" src="assets/band-top.png" alt="Boldness &amp; Burdens Conference 2026" />
+    <div class="mid">
+      <h1 class="title">Main Hall</h1>
+    </div>
+    
+    <div class="bottom">
+      <img class="band band--bottom" src="assets/band-bottom.png" alt="" />
+      
+      <div class="sponsor">
+        <img class="sponsor__logo" src="assets/getu-logo.png" alt="GeTu Prospects e.V." />
+        <span class="sponsor__txt"><span class="sponsor__lead">Sponsored by</span>GeTu Prospects e.V.</span>
+      </div>
+      <div class="qr">
+        <div class="qr__tile"><svg xmlns="http://www.w3.org/2000/svg" width="460" height="460" viewBox="0 0 33 33" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h33v33H0z"/><path stroke="#1e1610" d="M2 2.5h7m2 0h3m3 0h2m1 0h3m1 0h7M2 3.5h1m5 0h1m5 0h1m9 0h1m5 0h1M2 4.5h1m1 0h3m1 0h1m1 0h2m1 0h1m2 0h1m1 0h1m1 0h2m2 0h1m1 0h3m1 0h1M2 5.5h1m1 0h3m1 0h1m1 0h1m8 0h1m2 0h1m1 0h1m1 0h3m1 0h1M2 6.5h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h3m2 0h3m1 0h1m1 0h3m1 0h1M2 7.5h1m5 0h1m1 0h1m1 0h6m4 0h1m1 0h1m5 0h1M2 8.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M10 9.5h3m1 0h2m2 0h1m3 0h1M2 10.5h1m1 0h5m2 0h1m1 0h2m1 0h4m2 0h1m1 0h5M2 11.5h1m1 0h3m3 0h2m1 0h1m5 0h8m3 0h1M2 12.5h1m2 0h1m2 0h1m1 0h2m5 0h1m1 0h1m4 0h1m1 0h1M3 13.5h1m5 0h1m2 0h1m3 0h1m3 0h2m1 0h5m1 0h1M2 14.5h3m2 0h2m2 0h1m1 0h2m2 0h3m7 0h2M2 15.5h1m1 0h2m3 0h2m1 0h5m4 0h6m3 0h1M2 16.5h1m2 0h4m2 0h1m2 0h4m1 0h2m5 0h3M2 17.5h3m1 0h1m2 0h2m2 0h1m1 0h1m6 0h1m2 0h1m3 0h1M2 18.5h2m2 0h3m1 0h1m2 0h2m1 0h2m1 0h2m6 0h2M2 19.5h1m1 0h1m2 0h1m3 0h2m1 0h1m3 0h5m1 0h3m1 0h1m1 0h1M2 20.5h1m1 0h2m2 0h2m1 0h1m2 0h1m2 0h1m1 0h1m3 0h1m1 0h1m2 0h1M2 21.5h1m1 0h3m2 0h5m2 0h1m3 0h3m1 0h2m3 0h1M2 22.5h1m1 0h2m2 0h2m1 0h1m5 0h1m1 0h1m1 0h6m1 0h3M10 23.5h1m4 0h2m1 0h1m1 0h1m1 0h1m3 0h5M2 24.5h7m2 0h1m1 0h1m1 0h8m1 0h1m1 0h3M2 25.5h1m5 0h1m1 0h1m4 0h1m2 0h1m2 0h2m3 0h1m3 0h1M2 26.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m2 0h1m2 0h5m1 0h2M2 27.5h1m1 0h3m1 0h1m1 0h1m3 0h2m3 0h3m5 0h4M2 28.5h1m1 0h3m1 0h1m1 0h1m6 0h3m4 0h6M2 29.5h1m5 0h1m3 0h7m3 0h2m3 0h1m1 0h1M2 30.5h7m1 0h1m1 0h2m2 0h1m2 0h1m1 0h1m2 0h1m1 0h1m1 0h1"/></svg>
+</div>
+      </div>
+    </div>
+</section>
+
+<!-- ====================== PAGE 10 / 12 · Dining ====================== -->
+<section class="sign" data-label="Page 10 / 12 · Dining">
+    <img class="band band--top" src="assets/band-top.png" alt="Boldness &amp; Burdens Conference 2026" />
+    <div class="mid">
+      <h1 class="title">Dining</h1>
+    </div>
+    
+    <div class="bottom">
+      <img class="band band--bottom" src="assets/band-bottom.png" alt="" />
+      
+      <div class="sponsor">
+        <img class="sponsor__logo" src="assets/getu-logo.png" alt="GeTu Prospects e.V." />
+        <span class="sponsor__txt"><span class="sponsor__lead">Sponsored by</span>GeTu Prospects e.V.</span>
+      </div>
+      <div class="qr">
+        <div class="qr__tile"><svg xmlns="http://www.w3.org/2000/svg" width="460" height="460" viewBox="0 0 33 33" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h33v33H0z"/><path stroke="#1e1610" d="M2 2.5h7m2 0h3m3 0h2m1 0h3m1 0h7M2 3.5h1m5 0h1m5 0h1m9 0h1m5 0h1M2 4.5h1m1 0h3m1 0h1m1 0h2m1 0h1m2 0h1m1 0h1m1 0h2m2 0h1m1 0h3m1 0h1M2 5.5h1m1 0h3m1 0h1m1 0h1m8 0h1m2 0h1m1 0h1m1 0h3m1 0h1M2 6.5h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h3m2 0h3m1 0h1m1 0h3m1 0h1M2 7.5h1m5 0h1m1 0h1m1 0h6m4 0h1m1 0h1m5 0h1M2 8.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M10 9.5h3m1 0h2m2 0h1m3 0h1M2 10.5h1m1 0h5m2 0h1m1 0h2m1 0h4m2 0h1m1 0h5M2 11.5h1m1 0h3m3 0h2m1 0h1m5 0h8m3 0h1M2 12.5h1m2 0h1m2 0h1m1 0h2m5 0h1m1 0h1m4 0h1m1 0h1M3 13.5h1m5 0h1m2 0h1m3 0h1m3 0h2m1 0h5m1 0h1M2 14.5h3m2 0h2m2 0h1m1 0h2m2 0h3m7 0h2M2 15.5h1m1 0h2m3 0h2m1 0h5m4 0h6m3 0h1M2 16.5h1m2 0h4m2 0h1m2 0h4m1 0h2m5 0h3M2 17.5h3m1 0h1m2 0h2m2 0h1m1 0h1m6 0h1m2 0h1m3 0h1M2 18.5h2m2 0h3m1 0h1m2 0h2m1 0h2m1 0h2m6 0h2M2 19.5h1m1 0h1m2 0h1m3 0h2m1 0h1m3 0h5m1 0h3m1 0h1m1 0h1M2 20.5h1m1 0h2m2 0h2m1 0h1m2 0h1m2 0h1m1 0h1m3 0h1m1 0h1m2 0h1M2 21.5h1m1 0h3m2 0h5m2 0h1m3 0h3m1 0h2m3 0h1M2 22.5h1m1 0h2m2 0h2m1 0h1m5 0h1m1 0h1m1 0h6m1 0h3M10 23.5h1m4 0h2m1 0h1m1 0h1m1 0h1m3 0h5M2 24.5h7m2 0h1m1 0h1m1 0h8m1 0h1m1 0h3M2 25.5h1m5 0h1m1 0h1m4 0h1m2 0h1m2 0h2m3 0h1m3 0h1M2 26.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m2 0h1m2 0h5m1 0h2M2 27.5h1m1 0h3m1 0h1m1 0h1m3 0h2m3 0h3m5 0h4M2 28.5h1m1 0h3m1 0h1m1 0h1m6 0h3m4 0h6M2 29.5h1m5 0h1m3 0h7m3 0h2m3 0h1m1 0h1M2 30.5h7m1 0h1m1 0h2m2 0h1m2 0h1m1 0h1m2 0h1m1 0h1m1 0h1"/></svg>
+</div>
+      </div>
+    </div>
+</section>
+
+<!-- ====================== PAGE 11 / 12 · Find Your Badge ====================== -->
+<section class="sign" data-label="Page 11 / 12 · Find Your Badge">
+    <img class="band band--top" src="assets/band-top.png" alt="Boldness &amp; Burdens Conference 2026" />
+    <div class="mid">
+      <h1 class="title title--scan">Find Your Badge</h1>
+      <div class="heroqr"><div class="heroqr__tile"><svg xmlns="http://www.w3.org/2000/svg" width="620" height="620" viewBox="0 0 37 37" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h37v37H0z"/><path stroke="#1e1610" d="M2 2.5h7m1 0h1m1 0h1m2 0h2m2 0h1m3 0h2m3 0h7M2 3.5h1m5 0h1m1 0h1m1 0h2m1 0h2m1 0h1m1 0h2m4 0h1m1 0h1m5 0h1M2 4.5h1m1 0h3m1 0h1m1 0h1m3 0h3m4 0h3m1 0h1m2 0h1m1 0h3m1 0h1M2 5.5h1m1 0h3m1 0h1m2 0h1m1 0h1m2 0h3m1 0h1m1 0h2m1 0h2m1 0h1m1 0h3m1 0h1M2 6.5h1m1 0h3m1 0h1m1 0h1m1 0h4m1 0h3m3 0h1m4 0h1m1 0h3m1 0h1M2 7.5h1m5 0h1m3 0h1m1 0h1m1 0h3m1 0h2m3 0h2m1 0h1m5 0h1M2 8.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M12 9.5h1m2 0h1m1 0h2m1 0h1m3 0h1m1 0h1M2 10.5h1m2 0h7m1 0h1m4 0h2m2 0h1m3 0h2m2 0h1m1 0h3M3 11.5h2m7 0h1m2 0h3m1 0h3m1 0h1m1 0h1m4 0h4M2 12.5h4m1 0h2m1 0h6m1 0h2m3 0h1m1 0h3m1 0h1m1 0h3m1 0h1M2 13.5h2m2 0h2m1 0h1m3 0h1m1 0h1m1 0h2m1 0h2m2 0h2m2 0h2m2 0h1m1 0h1M2 14.5h4m1 0h4m4 0h1m1 0h1m1 0h1m1 0h1m3 0h1m2 0h1m4 0h2M3 15.5h2m5 0h1m2 0h1m1 0h2m3 0h3m1 0h2m3 0h1m2 0h1M2 16.5h1m1 0h1m1 0h6m1 0h1m2 0h2m3 0h2m1 0h1m3 0h1m1 0h1M3 17.5h2m1 0h1m3 0h6m2 0h1m1 0h1m1 0h1m3 0h2m2 0h1m1 0h1m1 0h1M4 18.5h1m1 0h1m1 0h2m2 0h1m1 0h4m4 0h1m1 0h1m1 0h5M3 19.5h1m1 0h2m2 0h1m1 0h1m3 0h3m1 0h4m5 0h1m1 0h1m1 0h1m1 0h1M3 20.5h2m2 0h3m1 0h1m1 0h11m1 0h2m1 0h2m1 0h2m1 0h1M2 21.5h1m1 0h3m2 0h1m3 0h1m2 0h3m2 0h1m5 0h2m1 0h4M4 22.5h1m2 0h3m2 0h1m2 0h1m2 0h1m1 0h2m1 0h4m2 0h1m1 0h1m1 0h1M2 23.5h2m2 0h1m2 0h4m1 0h2m8 0h2m3 0h4M2 24.5h1m3 0h1m1 0h2m2 0h1m1 0h3m2 0h1m1 0h2m2 0h1m2 0h2m1 0h1m1 0h2M2 25.5h1m1 0h1m6 0h1m5 0h1m1 0h1m1 0h2m3 0h1m1 0h1m1 0h5M2 26.5h4m1 0h2m3 0h1m2 0h2m1 0h1m3 0h1m2 0h7M10 27.5h1m2 0h5m1 0h2m2 0h1m2 0h1m3 0h1m1 0h2M2 28.5h7m1 0h2m1 0h1m3 0h1m1 0h1m1 0h1m3 0h2m1 0h1m1 0h1m1 0h1M2 29.5h1m5 0h1m1 0h1m1 0h3m1 0h6m1 0h4m3 0h4M2 30.5h1m1 0h3m1 0h1m1 0h5m2 0h3m1 0h1m1 0h8m2 0h1M2 31.5h1m1 0h3m1 0h1m1 0h7m1 0h1m1 0h1m3 0h1m2 0h1m1 0h1m4 0h1M2 32.5h1m1 0h3m1 0h1m2 0h1m5 0h1m3 0h1m1 0h2m2 0h1m1 0h2m2 0h2M2 33.5h1m5 0h1m2 0h3m1 0h1m4 0h3m1 0h1m2 0h1m1 0h6M2 34.5h7m1 0h1m3 0h1m1 0h2m1 0h1m1 0h1m3 0h2m2 0h3"/></svg>
+</div></div>
+    </div>
+    
+    <div class="bottom">
+      <img class="band band--bottom" src="assets/band-bottom-noqr.png" alt="" />
+      
+      <div class="sponsor">
+        <img class="sponsor__logo" src="assets/getu-logo.png" alt="GeTu Prospects e.V." />
+        <span class="sponsor__txt"><span class="sponsor__lead">Sponsored by</span>GeTu Prospects e.V.</span>
+      </div>
+    </div>
+</section>
+
+<!-- ====================== PAGE 12 / 12 · Need Help? ====================== -->
+<section class="sign" data-label="Page 12 / 12 · Need Help?">
+    <img class="band band--top" src="assets/band-top.png" alt="Boldness &amp; Burdens Conference 2026" />
+    <div class="mid">
+      <h1 class="title">Need Help?</h1>
+      <p class="contact"><span class="contact__name">Oladayo Fagbemi</span><span class="contact__phone">+49 162 1940237</span><span class="contact__wa">WhatsApp</span></p>
+    </div>
+    
+    <div class="bottom">
+      <img class="band band--bottom" src="assets/band-bottom.png" alt="" />
+      
+      <div class="sponsor">
+        <img class="sponsor__logo" src="assets/getu-logo.png" alt="GeTu Prospects e.V." />
+        <span class="sponsor__txt"><span class="sponsor__lead">Sponsored by</span>GeTu Prospects e.V.</span>
+      </div>
+      <div class="qr">
+        <div class="qr__tile"><svg xmlns="http://www.w3.org/2000/svg" width="460" height="460" viewBox="0 0 33 33" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h33v33H0z"/><path stroke="#1e1610" d="M2 2.5h7m2 0h3m3 0h2m1 0h3m1 0h7M2 3.5h1m5 0h1m5 0h1m9 0h1m5 0h1M2 4.5h1m1 0h3m1 0h1m1 0h2m1 0h1m2 0h1m1 0h1m1 0h2m2 0h1m1 0h3m1 0h1M2 5.5h1m1 0h3m1 0h1m1 0h1m8 0h1m2 0h1m1 0h1m1 0h3m1 0h1M2 6.5h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h3m2 0h3m1 0h1m1 0h3m1 0h1M2 7.5h1m5 0h1m1 0h1m1 0h6m4 0h1m1 0h1m5 0h1M2 8.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M10 9.5h3m1 0h2m2 0h1m3 0h1M2 10.5h1m1 0h5m2 0h1m1 0h2m1 0h4m2 0h1m1 0h5M2 11.5h1m1 0h3m3 0h2m1 0h1m5 0h8m3 0h1M2 12.5h1m2 0h1m2 0h1m1 0h2m5 0h1m1 0h1m4 0h1m1 0h1M3 13.5h1m5 0h1m2 0h1m3 0h1m3 0h2m1 0h5m1 0h1M2 14.5h3m2 0h2m2 0h1m1 0h2m2 0h3m7 0h2M2 15.5h1m1 0h2m3 0h2m1 0h5m4 0h6m3 0h1M2 16.5h1m2 0h4m2 0h1m2 0h4m1 0h2m5 0h3M2 17.5h3m1 0h1m2 0h2m2 0h1m1 0h1m6 0h1m2 0h1m3 0h1M2 18.5h2m2 0h3m1 0h1m2 0h2m1 0h2m1 0h2m6 0h2M2 19.5h1m1 0h1m2 0h1m3 0h2m1 0h1m3 0h5m1 0h3m1 0h1m1 0h1M2 20.5h1m1 0h2m2 0h2m1 0h1m2 0h1m2 0h1m1 0h1m3 0h1m1 0h1m2 0h1M2 21.5h1m1 0h3m2 0h5m2 0h1m3 0h3m1 0h2m3 0h1M2 22.5h1m1 0h2m2 0h2m1 0h1m5 0h1m1 0h1m1 0h6m1 0h3M10 23.5h1m4 0h2m1 0h1m1 0h1m1 0h1m3 0h5M2 24.5h7m2 0h1m1 0h1m1 0h8m1 0h1m1 0h3M2 25.5h1m5 0h1m1 0h1m4 0h1m2 0h1m2 0h2m3 0h1m3 0h1M2 26.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m2 0h1m2 0h5m1 0h2M2 27.5h1m1 0h3m1 0h1m1 0h1m3 0h2m3 0h3m5 0h4M2 28.5h1m1 0h3m1 0h1m1 0h1m6 0h3m4 0h6M2 29.5h1m5 0h1m3 0h7m3 0h2m3 0h1m1 0h1M2 30.5h7m1 0h1m1 0h2m2 0h1m2 0h1m1 0h1m2 0h1m1 0h1m1 0h1"/></svg>
+</div>
+      </div>
+    </div>
+</section>
+</body>
+</html>
