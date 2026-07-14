@@ -6,6 +6,7 @@ export const edition = {
   id: "bb26",
   name: "Boldness & Burdens Conference 2026",
   shortName: "B&B '26",
+  theme: "School of the Spirit",
   codePrefix: "BB26",
   dates: "July 16 – 19, 2026",
   // Conference days, used for per-day attendance check-in.

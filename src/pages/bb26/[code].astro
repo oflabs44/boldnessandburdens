@@ -72,7 +72,7 @@ function fmtTime(ts: string): string {
 ---
 
 <BaseLayout
-  title={card ? `${card.name} · ${edition.shortName} Pass` : `Pass not found · ${edition.shortName}`}
+  title={card ? `${card.name} · ${edition.shortName} Badge` : `Badge not found · ${edition.shortName}`}
   noindex={true}
   transparentHeader={true}
 >
@@ -158,11 +158,11 @@ function fmtTime(ts: string): string {
           <div class="pass__leather pass__leather--void">
             <img class="brandmark brandmark--void" src="/logo-white.png" alt="" width="600" height="630" />
             <p class="pass__role">Void</p>
-            <p class="pass__sub">Pass not found</p>
+            <p class="pass__sub">Badge not found</p>
           </div>
           <div class="pass__panel">
             <h1 class="pass__name pass__name--void">No match</h1>
-            <p class="pass__voidtext">We couldn't find that pass.</p>
+            <p class="pass__voidtext">We couldn't find that badge.</p>
             <a href="/bb26" class="btn btn--primary">Back to search</a>
           </div>
         </article>

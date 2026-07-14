@@ -304,7 +304,7 @@ const defaultSubjects: Record<string, string> = {
   "5-day-countdown": "5 Days to Go: Are You Ready?",
   "3-day-countdown": "Finally — 3 Days to Go!",
   "tshirt-closing-reminder": "BBC 2026 T-Shirt Orders Close Tomorrow!",
-  "badge-onboarding": "Your BB26 Digital Pass Is Ready",
+  "badge-onboarding": "Your BB26 Digital Badge Is Ready",
   "badge-onboarding-de": "Dein BB26 Digital-Ausweis ist bereit",
 };
 

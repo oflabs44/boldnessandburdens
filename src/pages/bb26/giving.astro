@@ -25,7 +25,9 @@ const paypal = "https://www.paypal.me/HeyMakhel";
       <a href="/" class="give__home" aria-label="Boldness & Burdens — home">
         <img src="/logo-black.png" alt="Boldness & Burdens Conference" width="600" height="630" />
       </a>
+      <p class="give__eyebrow">{edition.theme}</p>
       <h1 class="give__title">Give</h1>
+      <span class="give__ember" aria-hidden="true"></span>
 
       <div class="give__cols">
         <section class="give__col">
@@ -108,7 +110,26 @@ const paypal = "https://www.paypal.me/HeyMakhel";
 
   .give__home { display: inline-block; }
 
-  .give__home img { display: block; width: 130px; height: auto; margin: 0 auto -8px; }
+  .give__home img { display: block; width: 130px; height: auto; margin: 0 auto var(--space-sm); }
+
+  .give__eyebrow {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    margin: 0 0 var(--space-sm);
+  }
+
+  .give__ember {
+    display: block;
+    width: 68px;
+    height: 4px;
+    margin: var(--space-md) auto var(--space-2xl);
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--color-accent-dark), var(--color-accent-light));
+  }
 
   .give__title {
     font-family: var(--font-display);
@@ -116,7 +137,7 @@ const paypal = "https://www.paypal.me/HeyMakhel";
     line-height: 0.9;
     letter-spacing: 0.03em;
     color: var(--color-charcoal);
-    margin: 0 0 var(--space-2xl);
+    margin: 0;
   }
 
   /* ---- side by side, stack on mobile ---- */

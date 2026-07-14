@@ -47,12 +47,12 @@ if (Astro.request.method === "POST") {
     });
   }
 
-  error = "We couldn't match that ID and name. Check your BB26 ID and the spelling of your name.";
+  error = "That ID and name didn't match. Please check and try again.";
 }
 ---
 
 <BaseLayout
-  title={`Your Pass · ${edition.shortName}`}
+  title={`Your Badge · ${edition.shortName}`}
   description="Open your digital conference badge — room, group and daily check-in."
   noindex={true}
   transparentHeader={true}
@@ -63,8 +63,7 @@ if (Astro.request.method === "POST") {
     <section class="desk__inner">
       <img class="desk__logo" src="/logo-black.png" alt="Boldness & Burdens Conference" width="600" height="630" />
       <p class="desk__eyebrow">{edition.shortName}</p>
-      <h1 class="desk__title">Find your badge</h1>
-      <p class="desk__lead">Enter your BB26 ID and last name to open your pass.</p>
+      <h1 class="desk__title">Your Badge</h1>
 
       {error && <p class="desk__error">{error}</p>}
 
@@ -149,13 +148,6 @@ if (Astro.request.method === "POST") {
     letter-spacing: 0.03em;
     color: var(--color-charcoal);
     margin: 6px 0 8px;
-  }
-
-  .desk__lead {
-    margin: 0 auto;
-    max-width: 32ch;
-    color: var(--color-charcoal-light);
-    font-size: 1rem;
   }
 
   .desk__error {

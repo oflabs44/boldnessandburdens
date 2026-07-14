@@ -17,11 +17,21 @@ const { title, intro, hideBack = false } = Astro.props;
 
     <article class="info__inner">
       {!hideBack && (
-        <a class="info__back" href="/bb26" data-back>← Back to your pass</a>
+        <a class="info__back" href="/bb26" data-back>← Back</a>
       )}
-      <p class="info__eyebrow">{edition.shortName}</p>
-      <h1 class="info__title">{title}</h1>
-      {intro && <p class="info__intro">{intro}</p>}
+      <header class="info__head">
+        <img
+          class="info__logo"
+          src="/logo-black-trim.png"
+          alt="Boldness & Burdens Conference 2026"
+          width="150"
+          height="197"
+        />
+        <p class="info__eyebrow">{edition.theme}</p>
+        <h1 class="info__title">{title}</h1>
+        <span class="info__ember" aria-hidden="true"></span>
+        {intro && <p class="info__intro">{intro}</p>}
+      </header>
 
       <div class="info__body">
         <slot />
@@ -78,6 +88,21 @@ const { title, intro, hideBack = false } = Astro.props;
 
   .info__back:hover { color: var(--color-accent-dark); }
 
+  /* Centered branded header — logo, theme, title, ember accent */
+  .info__head {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .info__logo {
+    height: 60px;
+    width: auto;
+    display: block;
+    margin: 0 0 var(--space-md);
+  }
+
   .info__eyebrow {
     font-family: var(--font-body);
     font-size: 0.7rem;
@@ -97,15 +122,25 @@ const { title, intro, hideBack = false } = Astro.props;
     margin: 0;
   }
 
+  /* Ember accent — a small burning rule under the title */
+  .info__ember {
+    display: block;
+    width: 68px;
+    height: 4px;
+    margin: var(--space-md) 0 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--color-accent-dark), var(--color-accent-light));
+  }
+
   .info__intro {
     margin: var(--space-md) 0 0;
-    max-width: 52ch;
+    max-width: 46ch;
     color: var(--color-charcoal-light);
     font-size: 1.05rem;
   }
 
   .info__body {
-    margin-top: var(--space-xl);
+    margin-top: var(--space-2xl);
   }
 
   /* The first block sits right under the intro — no doubled-up top margin. */

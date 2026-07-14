@@ -17,15 +17,15 @@ const { variant = "light" } = Astro.props;
     rel="noopener"
   >
     <span class="legal-credit__logo">
-      <img src="/getu-logo.png" alt="GeTu Prospects e.V." width="483" height="309" />
+      <img src="/getu-logo.png" alt="GeTu Prospects e.V." width="241" height="288" />
     </span>
     <span class="legal-credit__text">
-      <span class="legal-credit__eyebrow">Veranstaltet von</span>
+      <span class="legal-credit__eyebrow">Sponsored by</span>
       <span class="legal-credit__name">GeTu Prospects e.V.</span>
     </span>
   </a>
 
-  <nav class="legal-credit__links" aria-label="Rechtliches">
+  <nav class="legal-credit__links" aria-label="Legal">
     <a href="/impressum">Impressum</a>
     <a href="/datenschutz">Datenschutz</a>
   </nav>
@@ -49,14 +49,13 @@ const { variant = "light" } = Astro.props;
 
   .legal-credit__logo {
     display: inline-flex;
-    padding: 6px;
+    padding: 3px;
     background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 1px 3px rgba(30, 22, 16, 0.12);
+    border-radius: 7px;
   }
 
   .legal-credit__logo img {
-    height: 30px;
+    height: 26px;
     width: auto;
     display: block;
   }
@@ -130,8 +129,9 @@ const { variant = "light" } = Astro.props;
 
   @media (max-width: 560px) {
     .legal-credit {
-      justify-content: center;
-      text-align: center;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-md);
     }
   }
 </style>
